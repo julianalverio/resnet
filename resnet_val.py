@@ -20,13 +20,16 @@ for json_dict in evaluated_str:
     name = name.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
     mapping[name] = imagenet_ids
 
+import pickle
+with open('/storage/jalverio/mappings.pkl', 'wb') as f:
+    pickle.dump(mapping, f)
+
 
 
 # CODE TO RENAME ALL THE OBJECTNET DIRS TO IMAGENET INTS
 image_dir = '/storage/jalverio/groupedImagesClass/'
 
 classes_mapped = 0
-names = []
 for objectnet_class in os.listdir(image_dir):
     objectnet_class = objectnet_class.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
     if objectnet_class not in mapping:
@@ -36,9 +39,8 @@ for objectnet_class in os.listdir(image_dir):
     if len(imagenet_labels) > 1:
         for label in imagenet_labels[1:]:
             new_name += '_' + str(label)
-    # os.rename(image_dir + objectnet_class, image_dir + new_name)
+    os.rename(image_dir + objectnet_class, image_dir + new_name)
     print('renaming', objectnet_class, 'to', new_name)
-    names.append(new_name)
     classes_mapped += 1
 print('objectnet classes mapped:', classes_mapped)
 import pdb; pdb.set_trace()
