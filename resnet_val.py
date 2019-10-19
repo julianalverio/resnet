@@ -54,7 +54,8 @@ for class_name in os.listdir(prefix):
         image = normalize(image)
         import pdb; pdb.set_trace()
         image = image.cuda().unsqueeze(0)
-        logits = model(image)
+        with torch.no_grad():
+            logits = model(image)
         top1_preds = set(np.array(torch.topk(logits, 1).indices.cpu()).tolist()[0])
         top5_preds = set(np.array(torch.topk(logits, 5).indices.cpu()).tolist()[0])
         top1_counter += int(len(top1_preds.intersection(labels)) > 0)
