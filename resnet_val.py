@@ -40,7 +40,7 @@ for class_name in os.listdir(prefix):
         continue
     labels = mapping[class_name]
     for image_name in os.listdir(prefix + class_name):
-        full_path = os.path.join(prefix, class_name, image)
+        full_path = os.path.join(prefix, class_name, image_name)
         image = Image.open(full_path)
         image = torch.tensor(image).cuda()
         logits = model(image)
