@@ -57,8 +57,8 @@ for class_name in os.listdir(prefix):
         import pdb; pdb.set_trace()
         top1_preds = set(np.array(torch.topk(logits, 1).indices.cpu()).tolist()[0])
         top5_preds = set(np.array(torch.topk(logits, 5).indices.cpu()).tolist()[0])
-        top1_counter += int(top1_preds.intersection(labels))
-        top5_counter += int(top1_preds.intersection(labels))
+        top1_counter += int(len(top1_preds.intersection(labels)) > 0)
+        top5_counter += int(len(top5_preds.intersection(labels)) > 0)
         total_examples += 1
 
 print('total examples', total_examples)
