@@ -1,3 +1,7 @@
+import os
+
+
+# OLD_DIR = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 
 # CODE TO CREATE THE MAPPING FROM OBJECTNET CLASS TO IMAGENET INTEGER LABELS
 # 116 overlap
@@ -17,14 +21,9 @@ for json_dict in evaluated_str:
     mapping[name] = imagenet_ids
 
 
-OLD_DIR = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 
 # CODE TO RENAME ALL THE OBJECTNET DIRS TO IMAGENET INTS
-import os
-
 image_dir = '/storage/jalverio/groupedImagesClass/'
-
-import pdb; pdb.set_trace()
 
 classes_mapped = 0
 not_mapped = []
