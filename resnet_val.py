@@ -47,6 +47,7 @@ for class_name in os.listdir(prefix):
     for image_name in os.listdir(prefix + class_name):
         full_path = os.path.join(prefix, class_name, image_name)
         image = Image.open(full_path)
+        image = Image.fromarray(np.array(image))
         import pdb; pdb.set_trace()
         image = normalize(image)
         image = np.array(image)
