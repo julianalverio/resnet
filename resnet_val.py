@@ -47,17 +47,23 @@ import os
 # print('objectnet classes mapped:', classes_mapped)
 
 
-# REMOVE THE CLASSES I DON'T NEED
-import re
-import shutil
-regex = re.compile(r'^[0-9]+.*')
-image_dir = '/storage/jalverio/groupedImagesClass/'
-for objectnet_class in os.listdir(image_dir):
-    if not regex.match(objectnet_class):
-        print('deleting ', objectnet_class)
-        shutil.rmtree(image_dir + objectnet_class)
+## REMOVE THE CLASSES I DON'T NEED
+# import re
+# import shutil
+# regex = re.compile(r'^[0-9]+.*')
+# image_dir = '/storage/jalverio/groupedImagesClass/'
+# for objectnet_class in os.listdir(image_dir):
+#     if not regex.match(objectnet_class):
+#         print('deleting ', objectnet_class)
+#         shutil.rmtree(image_dir + objectnet_class)
 
+import pickle
+with open('/storage/jalverio/mappings.pkl', 'rb') as f:
+    mapping = pickle.load(f)
 import pdb; pdb.set_trace()
+
+
+
 
 import torchvision
 import torch
@@ -65,7 +71,6 @@ import os
 from PIL import Image
 import numpy as np
 from torchvision import transforms, datasets
-
 
 
 model = torchvision.models.resnet101(pretrained=True)
@@ -77,7 +82,7 @@ normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
 WORKERS = 10
 BATCH_SIZE = 64
 
-blacklist = ['/storage/jalverio/groupedImagesClass/Ruler/53763_10_1557253103850.png']
+# blacklist = ['/storage/jalverio/groupedImagesClass/Ruler/53763_10_1557253103850.png']
 
 image_dir = '/storage/jalverio/groupedImagesClass/'
 val_loader = torch.utils.data.DataLoader(
