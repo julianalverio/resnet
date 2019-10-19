@@ -26,11 +26,10 @@ for json_dict in evaluated_str:
 image_dir = '/storage/jalverio/groupedImagesClass/'
 
 classes_mapped = 0
-not_mapped = []
+names = []
 for objectnet_class in os.listdir(image_dir):
     objectnet_class = objectnet_class.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
     if objectnet_class not in mapping:
-        not_mapped.append(objectnet_class)
         continue
     imagenet_labels = mapping[objectnet_class]
     new_name = str(imagenet_labels[0])
@@ -39,6 +38,7 @@ for objectnet_class in os.listdir(image_dir):
             new_name += '_' + str(label)
     # os.rename(image_dir + objectnet_class, image_dir + new_name)
     print('renaming', objectnet_class, 'to', new_name)
+    names.append(new_name)
     classes_mapped += 1
 print('objectnet classes mapped:', classes_mapped)
 import pdb; pdb.set_trace()
