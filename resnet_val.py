@@ -41,7 +41,7 @@ for objectnet_class in os.listdir(image_dir):
         for label in imagenet_labels[1:]:
             new_name += '_' + str(label)
     # os.rename(image_dir + objectnet_class, image_dir + new_name)
-    print('renaming', image_dir + objectnet_class, 'to', image_dir + new_name)
+    print('renaming', objectnet_class, 'to', new_name)
 import pdb; pdb.set_trace()
 
 
