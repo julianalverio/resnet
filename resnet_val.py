@@ -57,12 +57,6 @@ import os
 #         print('deleting ', objectnet_class)
 #         shutil.rmtree(image_dir + objectnet_class)
 
-import pickle
-with open('/storage/jalverio/mappings.pkl', 'rb') as f:
-    mapping = pickle.load(f)
-import pdb; pdb.set_trace()
-
-
 
 
 import torchvision
@@ -71,7 +65,7 @@ import os
 from PIL import Image
 import numpy as np
 from torchvision import transforms, datasets
-
+print('here')
 
 model = torchvision.models.resnet101(pretrained=True)
 model = model.eval().cuda()
