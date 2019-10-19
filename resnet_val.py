@@ -47,7 +47,6 @@ for class_name in os.listdir(prefix):
     for image_name in os.listdir(prefix + class_name):
         full_path = os.path.join(prefix, class_name, image_name)
         image = Image.open(full_path)
-        import pdb; pdb.set_trace()
         image = image.convert('RGB')
         # 3xHxW is expected
         image = torch.tensor(np.array(image))/255.
@@ -55,8 +54,9 @@ for class_name in os.listdir(prefix):
         image = normalize(image)
         image = image.cuda().unsqueeze(0)
         logits = model(image)
-        top1_preds = set(np.array(torch.topk(logits, 1)).tolist())
-        top5_preds = set(np.array(torch.topk(logits, 5)).tolist())
+        import pdb; pdb.set_trace()
+        top1_preds = set(np.array(torch.topk(logits, 1).indices.cpu()).tolist()[0])
+        top5_preds = set(np.array(torch.topk(logits, 5).indices.cpu()).tolist()[0])
         top1_counter += int(top1_preds.intersection(labels))
         top5_counter += int(top1_preds.intersection(labels))
         total_examples += 1
