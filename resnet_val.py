@@ -32,7 +32,6 @@ from torchvision import transforms
 with open('/storage/jalverio/mappings.pkl', 'rb') as f:
     mapping = pickle.load(f)
 model = torchvision.models.resnet101(pretrained=True).cuda()
-import pdb; pdb.set_trace()
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
@@ -60,7 +59,7 @@ for class_name in os.listdir(prefix):
         top1_counter += int(len(top1_preds.intersection(labels)) > 0)
         top5_counter += int(len(top5_preds.intersection(labels)) > 0)
         total_examples += 1
-        image = image.cpu()
+        # image = image.cpu()
         del image
 
 print('total examples', total_examples)
