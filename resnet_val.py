@@ -65,12 +65,13 @@ import os
 from PIL import Image
 import numpy as np
 from torchvision import transforms, datasets
+import torch.nn as nn
 print('here')
 
 model = torchvision.models.resnet101(pretrained=True)
 model = model.eval().cuda()
 import pdb; pdb.set_trace()
-model = torch.nn.parallel.DistributedDataParallel(model)
+model = nn.DataParallel(model)
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
 
