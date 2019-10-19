@@ -27,7 +27,7 @@ import os
 from PIL import Image
 import pickle
 
-with open('/storage/jalverio/mappings.pkl', 'wb') as f:
+with open('/storage/jalverio/mappings.pkl', 'rb') as f:
     mapping = pickle.load(f)
 model = torchvision.models.resnet101(pretrained=True).cuda()
 
