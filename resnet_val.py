@@ -32,6 +32,7 @@ from torchvision import transforms
 with open('/storage/jalverio/mappings.pkl', 'rb') as f:
     mapping = pickle.load(f)
 model = torchvision.models.resnet101(pretrained=True).cuda()
+import pdb; pdb.set_trace()
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
