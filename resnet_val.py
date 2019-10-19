@@ -31,6 +31,7 @@ image_dir = '/storage/jalverio/groupedImagesClass/'
 
 classes_mapped = 0
 for objectnet_class in os.listdir(image_dir):
+    original_objectnet_class = objectnet_class
     objectnet_class = objectnet_class.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
     if objectnet_class not in mapping:
         continue
@@ -39,7 +40,8 @@ for objectnet_class in os.listdir(image_dir):
     if len(imagenet_labels) > 1:
         for label in imagenet_labels[1:]:
             new_name += '_' + str(label)
-    os.rename(image_dir + objectnet_class, image_dir + new_name)
+
+    os.rename(image_dir + original_objectnet_class, image_dir + new_name)
     print('renaming', objectnet_class, 'to', new_name)
     classes_mapped += 1
 print('objectnet classes mapped:', classes_mapped)
