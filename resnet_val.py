@@ -52,7 +52,6 @@ for class_name in os.listdir(prefix):
         image = torch.tensor(np.array(image))/255.
         image = image.permute(2, 0, 1)         # 3xHxW is expected
         image = normalize(image)
-        import pdb; pdb.set_trace()
         image = image.cuda().unsqueeze(0)
         with torch.no_grad():
             logits = model(image)
