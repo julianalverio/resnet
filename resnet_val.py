@@ -59,81 +59,6 @@ import os
 
 
 
-import torchvision
-import torch
-import os
-from PIL import Image
-import numpy as np
-from torchvision import transforms, datasets
-import torch.nn as nn
-
-model = torchvision.models.resnet101(pretrained=True)
-model = model.eval().cuda()
-model = nn.DataParallel(model)
-normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                 std=[0.229, 0.224, 0.225])
-
-WORKERS = 10
-BATCH_SIZE = 64
-
-# blacklist = ['/storage/jalverio/groupedImagesClass/Ruler/53763_10_1557253103850.png']
-
-image_dir = '/storage/jalverio/groupedImagesClass/'
-val_loader = torch.utils.data.DataLoader(
-        datasets.ImageFolder(image_dir, transforms.Compose([
-            # transforms.ToPILImage(),
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            normalize,
-        ])),
-        batch_size=BATCH_SIZE, shuffle=False,
-        num_workers=WORKERS, pin_memory=True)
-
-
-for batch, labels in val_loader:
-    import pdb; pdb.set_trace()
-
-
-
-total_examples = 0
-top1_counter = 0
-top5_counter = 0
-for class_name in os.listdir(prefix):
-    if class_name not in mapping:
-        continue
-    print(class_name)
-    labels = mapping[class_name]
-    for image_name in os.listdir(prefix + class_name):
-        full_path = os.path.join(prefix, class_name, image_name)
-        if full_path in blacklist:
-            continue
-        image = Image.open(full_path)
-        image = transforms.ToPILImage(image)
-        image = image.convert('RGB')
-        image = torch.tensor(np.array(image))/255.
-        image = image.permute(2, 0, 1)         # 3xHxW is expected
-        image = normalize(image)
-        image = image.cuda().unsqueeze(0)
-        with torch.no_grad():
-            try:
-                logits = model(image)
-            except:
-                import pdb; pdb.set_trace()
-        top1_preds = set(np.array(torch.topk(logits, 1).indices.cpu()).tolist()[0])
-        top5_preds = set(np.array(torch.topk(logits, 5).indices.cpu()).tolist()[0])
-        top1_counter += int(len(top1_preds.intersection(labels)) > 0)
-        top5_counter += int(len(top5_preds.intersection(labels)) > 0)
-        total_examples += 1
-
-print('total examples', total_examples)
-print('top1 counter', top1_counter)
-print('top1 score', top1_counter / total_examples)
-print('top5 counter', top5_counter)
-print('top5 score', top5_counter / total_examples)
-
-
-
 def accuracy(output, target, topk=(1,)):
     """Computes the accuracy over the k top predictions for the specified values of k"""
     with torch.no_grad():
@@ -149,3 +74,48 @@ def accuracy(output, target, topk=(1,)):
             correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
             res.append(correct_k.mul_(100.0 / batch_size))
         return res
+
+
+
+import torchvision
+import torch
+import os
+from PIL import Image
+import numpy as np
+from torchvision import transforms, datasets
+import torch.nn as nn
+
+model = torchvision.models.resnet101(pretrained=True)
+model = model.eval().cuda()
+model = nn.DataParallel(model)
+normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+
+WORKERS = 25
+BATCH_SIZE = 64
+
+# blacklist = ['/storage/jalverio/groupedImagesClass/Ruler/53763_10_1557253103850.png']
+
+image_dir = '/storage/jalverio/groupedImagesClass/'
+
+for class_dirname in os.listdir(image_dir):
+    labels = class_dirname.split('_')
+    loader = torch.utils.data.DataLoader(
+            datasets.ImageFolder(image_dir + class_dirname, transforms.Compose([
+                transforms.Resize(256),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                normalize,
+            ])),
+            batch_size=BATCH_SIZE, shuffle=False,
+            num_workers=WORKERS, pin_memory=True)
+
+    import pdb; pdb.set_trace()
+    for batch, _ in loader:
+        labels = labels.repeat(batch.shape[0], 1, 1, 1)
+        logits = model(batch)
+        top1, top5 = accuracy(logits, labels, topk=(1, 5))
+
+
+
+
