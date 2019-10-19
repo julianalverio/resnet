@@ -49,6 +49,8 @@ for class_name in os.listdir(prefix):
         image = Image.open(full_path)
         import pdb; pdb.set_trace()
         image = image.convert('RGB')
+        # 3xHxW is expected
+        image = image.permute(2, 0, 1)
         image = torch.tensor(np.array(image))/255.
         image = normalize(image)
         image = np.array(image)
