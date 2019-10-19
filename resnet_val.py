@@ -13,7 +13,7 @@ for json_dict in evaluated_str:
             imagenet_ids = v
     if not imagenet_ids:
         continue
-    name = name.replace(' ', '_').lower()
+    name = name.replace(' ', '_').lower().replace("'", '')
     mapping[name] = imagenet_ids
 
 
@@ -21,10 +21,7 @@ OLD_DIR = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 
 # CODE TO RENAME ALL THE OBJECTNET DIRS TO IMAGENET INTS
 import os
-import pickle
 
-# with open('/storage/jalverio/mappings.pkl', 'rb') as f:
-#     mapping = pickle.load(f)
 image_dir = '/storage/jalverio/groupedImagesClass/'
 
 import pdb; pdb.set_trace()
@@ -32,7 +29,7 @@ import pdb; pdb.set_trace()
 classes_mapped = 0
 not_mapped = []
 for objectnet_class in os.listdir(image_dir):
-    objectnet_class = objectnet_class.replace(' ', '_').lower()
+    objectnet_class = objectnet_class.replace(' ', '_').lower().replace("'", '')
     if objectnet_class not in mapping:
         not_mapped.append(objectnet_class)
         continue
