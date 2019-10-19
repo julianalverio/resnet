@@ -53,8 +53,7 @@ for class_name in os.listdir(prefix):
         image = torch.tensor(np.array(image))/255.
         image = image.permute(2, 0, 1)
         image = normalize(image)
-        image = np.array(image)
-        image = torch.tensor(image).cuda().unsqueeze(0)
+        image = image.cuda().unsqueeze(0)
         logits = model(image)
         top1_preds = set(torch.topk(logits, 1))
         top5_preds = set(torch.topk(logits, 5))
