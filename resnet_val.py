@@ -55,8 +55,8 @@ for class_name in os.listdir(prefix):
         image = normalize(image)
         image = image.cuda().unsqueeze(0)
         logits = model(image)
-        top1_preds = set(torch.topk(logits, 1))
-        top5_preds = set(torch.topk(logits, 5))
+        top1_preds = set(np.array(torch.topk(logits, 1)).tolist())
+        top5_preds = set(np.array(torch.topk(logits, 5)).tolist())
         top1_counter += int(top1_preds.intersection(labels))
         top5_counter += int(top1_preds.intersection(labels))
         total_examples += 1
