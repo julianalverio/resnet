@@ -70,12 +70,11 @@ print('here')
 
 model = torchvision.models.resnet101(pretrained=True)
 model = model.eval().cuda()
-import pdb; pdb.set_trace()
 model = nn.DataParallel(model)
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
 
-WORKERS = 2
+WORKERS = 10
 BATCH_SIZE = 64
 
 # blacklist = ['/storage/jalverio/groupedImagesClass/Ruler/53763_10_1557253103850.png']
