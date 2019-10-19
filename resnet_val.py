@@ -34,7 +34,7 @@ import pdb; pdb.set_trace()
 
 for objectnet_class in os.listdir(image_dir):
     if objectnet_class not in mapping:
-        print(objectnet_class, 'not in', mapping.keys())
+        print(objectnet_class, 'not in', sorted(mapping.keys()))
         import pdb; pdb.set_trace()
         continue
     imagenet_labels = mapping[objectnet_class]
