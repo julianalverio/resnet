@@ -91,9 +91,11 @@ val_loader = torch.utils.data.DataLoader(
         batch_size=BATCH_SIZE, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
 
-import pdb; pdb.set_trace()
-# COMPUTE TOTAL EXAMPLES TODO
-num_batches = len(val_loader)
+
+for batch, labels in val_loader:
+    import pdb; pdb.set_trace()
+
+
 
 total_examples = 0
 top1_counter = 0
