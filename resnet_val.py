@@ -28,11 +28,19 @@ import pickle
 
 with open('/storage/jalverio/mappings.pkl', 'rb') as f:
     mapping = pickle.load(f)
-image_dir = '/storage/jalverio/groupedImagesClass'
+image_dir = '/storage/jalverio/groupedImagesClass/'
+
 import pdb; pdb.set_trace()
 
-# for objectnet_class in os.listdir(image_dir):
-
+for objectnet_class in os.listdir(image_dir):
+    imagenet_labels = mapping[objectnet_class]
+    new_name = imagenet_labels[0]
+    if len(imagenet_labels) > 1:
+        for label in imagenet_labels[1:]:
+            new_name += '_' + str(label)
+    # os.rename(image_dir + objectnet_class, image_dir + new_name)
+    print('renaming', image_dir + objectnet_class, 'to', image_dir + new_name)
+import pdb; pdb.set_trace()
 
 
 
