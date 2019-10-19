@@ -55,10 +55,9 @@ image_dir = '/storage/jalverio/groupedImagesClass/'
 for objectnet_class in os.listdir(image_dir):
     if not regex.match(objectnet_class):
         print('deleting ', objectnet_class)
-        import pdb; pdb.set_trace()
         shutil.rmtree(image_dir + objectnet_class)
 
-
+import pdb; pdb.set_trace()
 
 import torchvision
 import torch
