@@ -36,6 +36,8 @@ model = torchvision.models.resnet101(pretrained=True).cuda()
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
 
+blacklist = ['/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass/Ruler/53763_10_1557253103850.png']
+
 prefix = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass/'
 total_examples = 0
 top1_counter = 0
@@ -44,11 +46,11 @@ for class_name in os.listdir(prefix):
     if class_name not in mapping:
         continue
     print(class_name)
-    if class_name != 'Ruler':
-        continue
     labels = mapping[class_name]
     for image_name in os.listdir(prefix + class_name):
         full_path = os.path.join(prefix, class_name, image_name)
+        if full_path in blacklist:
+            continue
         image = Image.open(full_path)
         image = image.convert('RGB')
         image = torch.tensor(np.array(image))/255.
