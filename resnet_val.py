@@ -60,6 +60,8 @@ for class_name in os.listdir(prefix):
         top1_counter += int(len(top1_preds.intersection(labels)) > 0)
         top5_counter += int(len(top5_preds.intersection(labels)) > 0)
         total_examples += 1
+        image = image.cpu()
+        del image
 
 print('total examples', total_examples)
 print('top1 counter', top1_counter)
