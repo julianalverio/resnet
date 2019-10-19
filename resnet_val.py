@@ -26,6 +26,7 @@ import torch
 import os
 from PIL import Image
 import pickle
+import numpy as np
 
 with open('/storage/jalverio/mappings.pkl', 'rb') as f:
     mapping = pickle.load(f)
@@ -42,6 +43,7 @@ for class_name in os.listdir(prefix):
     for image_name in os.listdir(prefix + class_name):
         full_path = os.path.join(prefix, class_name, image_name)
         image = Image.open(full_path)
+        image = np.array(image)
         image = torch.tensor(image).cuda()
         logits = model(image)
         import pdb; pdb.set_trace()
