@@ -15,7 +15,6 @@ for json_dict in evaluated_str:
         continue
     name = name.replace(' ', '_').lower()
     mapping[name] = imagenet_ids
-    import pdb; pdb.set_trace()
 
 
 OLD_DIR = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
@@ -33,10 +32,10 @@ import pdb; pdb.set_trace()
 classes_mapped = 0
 not_mapped = []
 for objectnet_class in os.listdir(image_dir):
+    objectnet_class = objectnet_class.replace(' ', '_').lower()
     if objectnet_class not in mapping:
         not_mapped.append(objectnet_class)
         continue
-    objectnet_class = objectnet_class.replace(' ', '_').lower()
     imagenet_labels = mapping[objectnet_class]
     new_name = str(imagenet_labels[0])
     if len(imagenet_labels) > 1:
