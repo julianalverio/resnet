@@ -23,8 +23,8 @@ OLD_DIR = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 import os
 import pickle
 
-with open('/storage/jalverio/mappings.pkl', 'rb') as f:
-    mapping = pickle.load(f)
+# with open('/storage/jalverio/mappings.pkl', 'rb') as f:
+#     mapping = pickle.load(f)
 image_dir = '/storage/jalverio/groupedImagesClass/'
 
 import pdb; pdb.set_trace()
