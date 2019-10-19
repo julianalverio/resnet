@@ -36,7 +36,7 @@ for objectnet_class in os.listdir(image_dir):
     if objectnet_class not in mapping:
         continue
     imagenet_labels = mapping[objectnet_class]
-    new_name = imagenet_labels[0]
+    new_name = str(imagenet_labels[0])
     if len(imagenet_labels) > 1:
         for label in imagenet_labels[1:]:
             new_name += '_' + str(label)
