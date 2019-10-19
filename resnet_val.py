@@ -44,12 +44,15 @@ for class_name in os.listdir(prefix):
     if class_name not in mapping:
         continue
     print(class_name)
+    if class_name != 'Ruler':
+        continue
     labels = mapping[class_name]
     for image_name in os.listdir(prefix + class_name):
         full_path = os.path.join(prefix, class_name, image_name)
         image = Image.open(full_path)
         image = image.convert('RGB')
         image = torch.tensor(np.array(image))/255.
+        import pdb; pdb.set_trace()
         image = image.permute(2, 0, 1)         # 3xHxW is expected
         image = normalize(image)
         image = image.cuda().unsqueeze(0)
