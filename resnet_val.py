@@ -15,6 +15,7 @@ for json_dict in evaluated_str:
         continue
     name = name.replace(' ', '_').lower()
     mapping[name] = imagenet_ids
+    import pdb; pdb.set_trace()
 
 
 OLD_DIR = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
