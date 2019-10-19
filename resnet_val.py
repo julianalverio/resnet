@@ -36,6 +36,8 @@ total_examples = 0
 top1_counter = 0
 top5_counter = 0
 for class_name in os.listdir(prefix):
+    if class_name not in mapping:
+        continue
     labels = mapping[class_name]
     for image_name in os.listdir(prefix + class_name):
         full_path = os.path.join(prefix, class_name, image)
