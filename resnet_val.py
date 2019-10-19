@@ -73,7 +73,7 @@ model = torch.nn.parallel.DistributedDataParallel(model)
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
 
-WORKERS = 10
+WORKERS = 2
 BATCH_SIZE = 64
 
 # blacklist = ['/storage/jalverio/groupedImagesClass/Ruler/53763_10_1557253103850.png']
