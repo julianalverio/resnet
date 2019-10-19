@@ -82,9 +82,9 @@ image_dir = '/storage/jalverio/groupedImagesClass/'
 val_loader = torch.utils.data.DataLoader(
         datasets.ImageFolder(image_dir, transforms.Compose([
             # transforms.ToPILImage(),
-            transforms.ToTensor(),
             transforms.Resize(256),
             transforms.CenterCrop(224),
+            transforms.ToTensor(),
             normalize,
         ])),
         batch_size=BATCH_SIZE, shuffle=False,
