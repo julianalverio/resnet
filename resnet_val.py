@@ -26,32 +26,8 @@ for json_dict in evaluated_str:
 # CODE TO RENAME ALL THE OBJECTNET DIRS TO IMAGENET INTS
 image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 
-# for objectnet_class in os.listdir(image_dir):
-#     original_objectnet_class = objectnet_class
-#     objectnet_class = objectnet_class.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
-#     if objectnet_class not in mapping:
-#         continue
-#     imagenet_labels = mapping[objectnet_class]
-#     new_name = str(imagenet_labels[0])
-#     if len(imagenet_labels) > 1:
-#         for label in imagenet_labels[1:]:
-#             new_name += '_' + str(label)
-#
-
-
-
-## REMOVE THE CLASSES I DON'T NEED
-# import re
-# import shutil
-# regex = re.compile(r'^[0-9]+.*')
-# image_dir = '/storage/jalverio/groupedImagesClass/'
-# for objectnet_class in os.listdir(image_dir):
-#     if not regex.match(objectnet_class):
-#         print('deleting ', objectnet_class)
-#         shutil.rmtree(image_dir + objectnet_class)
 
 from torch.utils.data import Dataset
-
 
 def accuracy(output, target):
     with torch.no_grad():
@@ -64,6 +40,7 @@ def accuracy(output, target):
         pred_set = set(prediction.cpu().numpy().tolist())
         target_set = set(target[idx].cpu().numpy().tolist())
         if pred_set.intersection(target_set):
+            import pdb; pdb.set_trace()
             top5_correct += 1
         if prediction[0] in target_set:
             top1_correct += 1
