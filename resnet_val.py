@@ -92,17 +92,20 @@ transformations = transforms.Compose([
     ])
 
 
-val_loader = torch.utils.data.DataLoader(
-        datasets.ImageFolder(image_dir, transforms.Compose([
+import pdb; pdb.set_trace()
+dataset = datasets.ImageFolder(image_dir, transforms.Compose([
             transforms.Resize(256),
             transforms.CenterCrop(224),
             transforms.ToTensor(),
             normalize,
-        ])),
+        ]))
+
+
+val_loader = torch.utils.data.DataLoader(
+        dataset,
         batch_size=BATCH_SIZE, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
 
-import pdb; pdb.set_trace()
 for batch, labels in val_loader:
     import pdb; pdb.set_trace()
 
