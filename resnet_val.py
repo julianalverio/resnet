@@ -59,6 +59,12 @@ def accuracy(output, target):
         _, pred = output.topk(5, 1, True, True)
     top5_correct = 0
     top1_correct = 0
+
+    import pdb; pdb.set_trace()
+    for prediction in pred:
+        pred_set = set(prediction.cpu().numpy().tolist())
+
+
     for counter in range(5):
         current_prediction = pred[:, counter]
         current_prediction = current_prediction.unsqueeze(1)
