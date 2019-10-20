@@ -84,6 +84,7 @@ class Objectnet(Dataset):
 
     def __init__(self, root, transform, mapping):
         self.root = root
+        import pdb; pdb.set_trace()
         self.transform = transform
         self.images = []
         success_counter = 0
