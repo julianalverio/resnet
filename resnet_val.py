@@ -154,7 +154,7 @@ val_loader = torch.utils.data.DataLoader(
 for batch, labels in val_loader:
     batch = batch.to(DEVICE)
     import pdb; pdb.set_trace()
-    labels = torch.tensor(np.array(labels)).to(DEVICE)
+    labels = labels[0].to(DEVICE)
     # torch.tensor(labels).to(DEVICE)
     import pdb; pdb.set_trace()
     logits = model(batch)
