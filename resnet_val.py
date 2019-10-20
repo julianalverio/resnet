@@ -53,7 +53,7 @@ from torch.utils.data import Dataset
 
 
 def accuracy(output, target):
-    if len(target.shape) != 1:
+    if target.shape[1] != 1:
         import pdb; pdb.set_trace()
     with torch.no_grad():
         # pred is n x 5
