@@ -102,6 +102,7 @@ for label_dirname in os.listdir(prefix):
         image = image.convert('RGB')
         image = transformations(image)
         image = image.to(DEVICE)
+        image.unsqueeze(0)
         # image = torch.tensor(np.array(image))/255.
         # image = image.permute(2, 0, 1)         # 3xHxW is expected
         # image = normalize(image)
