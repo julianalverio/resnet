@@ -52,6 +52,25 @@ image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 from torch.utils.data import Dataset
 
 
+
+
+def accuracy(output, target, topk=(1,)):
+    """Computes the accuracy over the k top predictions for the specified values of k"""
+    with torch.no_grad():
+        maxk = max(topk)
+        batch_size = target.size(0)
+
+        _, pred = output.topk(maxk, 1, True, True)
+        pred = pred.t()
+        correct = pred.eq(target.view(1, -1).expand_as(pred))
+
+        res = []
+        for k in topk:
+            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+            res.append(correct_k.mul_(100.0 / batch_size))
+        return res
+
+
 class Objectnet(Dataset):
     """Dataset wrapping images and target labels for Kaggle - Planet Amazon from Space competition.
 
@@ -132,8 +151,9 @@ val_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=BATCH_SIZE, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
-import pdb; pdb.set_trace()
 for batch, labels in val_loader:
+    logits = model(batch)
+    top1, top5 = accuracy(logits, labels, (1, 5))
     import pdb; pdb.set_trace()
 
 
