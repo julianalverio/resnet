@@ -100,7 +100,7 @@ for label_dirname in os.listdir(prefix):
         import pdb; pdb.set_trace()
         image = transforms.ToPILImage(image)
         image = transformations(image)
-        # image = image.convert('RGB')
+        image = image.convert('RGB')
         # image = torch.tensor(np.array(image))/255.
         # image = image.permute(2, 0, 1)         # 3xHxW is expected
         # image = normalize(image)
