@@ -78,7 +78,7 @@ image_dir = '/storage/jalverio/groupedImagesClass/'
 for numbered_dir in os.listdir(image_dir):
     old_name = second_mapping[int(numbered_dir)]
     print('renaming %s to %s' % (numbered_dir, old_name))
-    # os.rename(image_dir + numbered_dir, image_dir + old_name)
+    os.rename(image_dir + numbered_dir, image_dir + old_name)
 
 import pdb; pdb.set_trace()
 
