@@ -61,6 +61,7 @@ def accuracy(output, target):
     total_correct = 0
     for counter in range(5):
         current_prediction = pred[counter]
+        import pdb; pdb.set_trace()
         correct_count = current_prediction.eq(target).float().sum()
         total_correct += correct_count.item()
 
