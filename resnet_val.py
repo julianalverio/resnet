@@ -67,7 +67,7 @@ import numpy as np
 from torchvision import transforms, datasets
 import torch.nn as nn
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 model = torchvision.models.resnet101(pretrained=True)
 model = model.eval().to(DEVICE)
