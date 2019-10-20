@@ -57,6 +57,20 @@ import os
 #         print('deleting ', objectnet_class)
 #         shutil.rmtree(image_dir + objectnet_class)
 
+### RENAME DIRECTORIES TO HAVE "LABEL" NAMES
+import os
+image_dir = '/storage/jalverio/groupedImagesClass/'
+lookup = dict()
+for counter, label_list in enumerate(os.listdir(image_dir)):
+    lookup[counter] = label_list
+    print('renaming %s to %s' % (label_list, counter))
+    # os.rename(image_dir + label_list, image_dir + str(counter))
+print(lookup)
+import pdb; pdb.set_trace()
+
+
+
+
 
 
 import torchvision
@@ -81,7 +95,6 @@ TOTAL_SAMPLES = 40146
 
 # blacklist = ['/storage/jalverio/groupedImagesClass/Ruler/53763_10_1557253103850.png']
 
-image_dir = '/storage/jalverio/groupedImagesClass/'
 
 
 transformations = transforms.Compose([
