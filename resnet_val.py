@@ -60,6 +60,7 @@ def accuracy(output, target, topk=(1,)):
         maxk = max(topk)
         batch_size = target.size(0)
 
+        import pdb; pdb.set_trace()
         _, pred = output.topk(maxk, 1, True, True)
         pred = pred.t()
         correct = pred.eq(target.view(1, -1).expand_as(pred))
@@ -67,7 +68,7 @@ def accuracy(output, target, topk=(1,)):
         res = []
         for k in topk:
             correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-            res.append(correct_k.mul_(100.0 / batch_size)).item()
+            res.append(correct_k.mul_(100.0 / batch_size))
         return res
 
 
@@ -151,54 +152,19 @@ val_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=BATCH_SIZE, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
+
+total_top1 = torch.tensor(0)
+total_top5 = torch.tensor(0)
 for batch, labels in val_loader:
     batch = batch.to(DEVICE)
     labels = labels[0].to(DEVICE)
-    import pdb; pdb.set_trace()
     logits = model(batch)
     top1, top5 = accuracy(logits, labels, (1, 5))
+    total_top1 += top1
+    total_top5 += top5
+
     import pdb; pdb.set_trace()
 
 
-prefix = image_dir
-total_examples = 0
-top1_counter = 0
-top5_counter = 0
-import time
-start = time.time()
-for label_dirname in os.listdir(prefix):
-    labels = set([int(x) for x in label_dirname.split('_')])
-    for image_name in os.listdir(prefix + label_dirname):
-        full_path = os.path.join(prefix, label_dirname, image_name)
-        image = Image.open(full_path)
-        image = image.convert('RGB')
-        image = transformations(image)
-        image = image.to(DEVICE)
-        image = image.unsqueeze(0)
-        with torch.no_grad():
-            try:
-                logits = model(image)
-            except:
-                import pdb; pdb.set_trace()
-        top1_preds = set(np.array(torch.topk(logits, 1).indices.cpu()).tolist()[0])
-        top5_preds = set(np.array(torch.topk(logits, 5).indices.cpu()).tolist()[0])
-        top1_counter += int(len(top1_preds.intersection(labels)) > 0)
-        top5_counter += int(len(top5_preds.intersection(labels)) > 0)
-        total_examples += 1
-    fraction_done = total_examples / TOTAL_SAMPLES
-    time_taken = time.time() - start
-    time_per_sample = time_taken / total_examples
-    remaining_samples = TOTAL_SAMPLES - total_examples
-    time_remaining = time_per_sample * remaining_samples
-    hours_remaining = time_remaining / 60
-    current_top1 = top1_counter / total_examples
-    current_top5 = top5_counter / total_examples
-    print('%s completed in %s, %s hours remaining. Current top1=%s, top5=%s' % (fraction_done, time_taken, hours_remaining, current_top1, current_top5))
-
-print('total examples', total_examples)
-print('top1 counter', top1_counter)
-print('top1 score', top1_counter / total_examples)
-print('top5 counter', top5_counter)
-print('top5 score', top5_counter / total_examples)
 
 
