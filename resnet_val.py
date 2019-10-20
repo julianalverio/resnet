@@ -152,6 +152,8 @@ val_loader = torch.utils.data.DataLoader(
         batch_size=BATCH_SIZE, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
 for batch, labels in val_loader:
+    batch.to(DEVICE)
+    labels.to(DEVICE)
     import pdb; pdb.set_trace()
     logits = model(batch)
     top1, top5 = accuracy(logits, labels, (1, 5))
