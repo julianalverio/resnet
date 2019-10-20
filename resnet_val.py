@@ -85,7 +85,7 @@ transformations = transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(224),
         transforms.ToTensor(),
-        # normalize,
+        normalize,
     ])
 
 prefix = image_dir
@@ -97,8 +97,6 @@ for label_dirname in os.listdir(prefix):
     for image_name in os.listdir(prefix + label_dirname):
         full_path = os.path.join(prefix, label_dirname, image_name)
         image = Image.open(full_path)
-        import pdb; pdb.set_trace()
-        image = transforms.ToPILImage()(image)
         image = image.convert('RGB')
         image = transformations(image)
         # image = torch.tensor(np.array(image))/255.
