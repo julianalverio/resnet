@@ -110,7 +110,6 @@ for label_dirname in os.listdir(prefix):
             try:
                 logits = model(image)
             except:
-                import pdb; pdb.set_trace()
         top1_preds = set(np.array(torch.topk(logits, 1).indices.cpu()).tolist()[0])
         top5_preds = set(np.array(torch.topk(logits, 5).indices.cpu()).tolist()[0])
         top1_counter += int(len(top1_preds.intersection(labels)) > 0)
@@ -120,10 +119,11 @@ for label_dirname in os.listdir(prefix):
         total_examples += 1
     fraction_done = total_examples / TOTAL_SAMPLES
     time_taken = time.time() - start
-    time_remaining = (1 - fraction_done) / fraction_done * time_taken / 60
+    time_remaining = (1 - fraction_done) / fraction_done * time_taken
+    hours_remaining = time_remaining / 60
     current_top1 = top1_counter / total_examples
     current_top5 = top5_counter / total_examples
-    print('%s completed in %s, %s hours remaining. Current top1=%s, top5=%s' % (fraction_done, time_taken, time_remaining, current_top1, current_top5))
+    print('%s completed in %s, %s hours remaining. Current top1=%s, top5=%s' % (fraction_done, time_taken, hours_remaining, current_top1, current_top5))
 
 print('total examples', total_examples)
 print('top1 counter', top1_counter)
