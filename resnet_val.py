@@ -127,8 +127,8 @@ model = model.eval().to(DEVICE)
 model = nn.DataParallel(model)
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
-WORKERS = 50
-BATCH_SIZE = 256
+WORKERS = 1
+BATCH_SIZE = 1
 TOTAL_SAMPLES = 40146
 
 transformations = transforms.Compose([
@@ -156,7 +156,7 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     labels = labels[0].to(DEVICE)
     with torch.no_grad():
         logits = model(batch)
-        top1, top5 = accuracy(logits, labels, (1, 5))
+        top1, top5 = accuracy(logits, labels)
     total_top1 += top1.item()
     total_top5 += top5.item()
     total_examples += batch.shape[0]
