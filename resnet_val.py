@@ -74,7 +74,6 @@ class Objectnet(Dataset):
                 continue
             success_counter += 1
             labels = mapping[class_name]
-            labels = [int(label) for label in labels.split('_')]
             images = os.listdir(os.path.join(root, label_dirname))
             [self.images.append((os.path.join(root, label_dirname, image_name)), labels) for image_name in images]
             print(success_counter)
