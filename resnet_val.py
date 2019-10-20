@@ -95,8 +95,6 @@ class Objectnet(Dataset):
                 continue
             success_counter += 1
             labels = mapping[class_name]
-            if len(labels) > 1:
-                import pdb; pdb.set_trace()
 
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
