@@ -95,7 +95,7 @@ total_examples = 0
 top1_counter = 0
 top5_counter = 0
 for label_dirname in os.listdir(prefix):
-    labels = [int(x) for x in label_dirname.split('_')]
+    labels = set([int(x) for x in label_dirname.split('_')])
     for image_name in os.listdir(prefix + label_dirname):
         full_path = os.path.join(prefix, label_dirname, image_name)
         image = Image.open(full_path)
@@ -107,7 +107,6 @@ for label_dirname in os.listdir(prefix):
         # image = image.permute(2, 0, 1)         # 3xHxW is expected
         # image = normalize(image)
         # image = image.cuda().unsqueeze(0)
-        import pdb; pdb.set_trace()
         with torch.no_grad():
             try:
                 logits = model(image)
@@ -117,6 +116,8 @@ for label_dirname in os.listdir(prefix):
         top5_preds = set(np.array(torch.topk(logits, 5).indices.cpu()).tolist()[0])
         top1_counter += int(len(top1_preds.intersection(labels)) > 0)
         top5_counter += int(len(top5_preds.intersection(labels)) > 0)
+        if int(len(top5_preds.intersection(labels)) > 0) == 1:
+            import pdb; pdb.set_trace()
         total_examples += 1
 
 print('total examples', total_examples)
