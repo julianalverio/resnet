@@ -58,13 +58,16 @@ def accuracy(output, target):
         _, pred = output.topk(5, 1, True, True)
     top5_correct = 0
     top1_correct = 0
-    for counter in range(5):
-        current_prediction = pred[:, counter]
-        correct_count = current_prediction.eq(target).float().sum()
-        top5_correct += correct_count.item()
-        if counter == 0:
-            top1_correct += correct_count.item()
-    return top1_correct, top5_correct
+    try:
+        for counter in range(5):
+            current_prediction = pred[:, counter]
+            correct_count = current_prediction.eq(target).float().sum()
+            top5_correct += correct_count.item()
+            if counter == 0:
+                top1_correct += correct_count.item()
+        return top1_correct, top5_correct
+    except:
+        import pdb; pdb.set_trace()
 
 
 class Objectnet(Dataset):
@@ -156,8 +159,8 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     with torch.no_grad():
         logits = model(batch)
         top1, top5 = accuracy(logits, labels)
-    total_top1 += top1.item()
-    total_top5 += top5.item()
+    total_top1 += top1
+    total_top5 += top5
     total_examples += batch.shape[0]
 
     fraction_done = round(batch_counter / len(val_loader), 3)
