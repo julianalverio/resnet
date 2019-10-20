@@ -39,7 +39,6 @@ def accuracy(output, target):
         if pred_set.intersection(target_set):
             top5_correct += 1
         else:
-            import pdb; pdb.set_trace()
             for target in target_set:
                 assert target not in pred_set
 
