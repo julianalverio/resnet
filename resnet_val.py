@@ -39,11 +39,11 @@ def accuracy(output, target):
         if pred_set.intersection(target_set):
             top5_correct += 1
         else:
-            import pdb; pdb.set_trace()
+            for target in list(target_set):
+                assert target not in pred_set
+
         if prediction[0].item() in target_set:
             top1_correct += 1
-        else:
-            import pdb; pdb.set_trace()
 
     return top1_correct, top5_correct
 
