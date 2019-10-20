@@ -71,6 +71,19 @@ import os
 #     pickle.dump(lookup, f)
 
 
+import pickle
+with open('/storage/jalverio/second_mapping.pkl', 'rb') as f:
+    second_mapping = pickle.load(f)
+image_dir = '/storage/jalverio/groupedImagesClass/'
+for numbered_dir in os.listdir(image_dir):
+    old_name = second_mapping[int(numbered_dir)]
+    print('renaming %s to %s' % (numbered_dir, old_name))
+    # os.rename(image_dir + numbered_dir, image_dir + old_name)
+
+import pdb; pdb.set_trace()
+
+
+
 
 import torchvision
 import torch
