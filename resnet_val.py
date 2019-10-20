@@ -53,8 +53,6 @@ from torch.utils.data import Dataset
 
 
 def accuracy(output, target):
-    if torch.any(target[...] == 307):
-        import pdb; pdb.set_trace()
     if len(target.shape) != 1:
         import pdb; pdb.set_trace()
     with torch.no_grad():
@@ -159,12 +157,8 @@ total_top5 = 0
 total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
-    if batch_counter == 137:
-        import pdb; pdb.set_trace()
     batch = batch.to(DEVICE)
-    if torch.any(labels[0] == 307):
-        import pdb; pdb.set_trace()
-    labels = labels[0].to(DEVICE)
+    labels = torch.stack(labels, dim=1).to(DEVICE)
     with torch.no_grad():
         logits = model(batch)
         top1, top5 = accuracy(logits, labels)
