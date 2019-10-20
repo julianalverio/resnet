@@ -77,6 +77,7 @@ normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
 
 WORKERS = 25
 BATCH_SIZE = 64
+TOTAL_SAMPLES = 40146
 
 # blacklist = ['/storage/jalverio/groupedImagesClass/Ruler/53763_10_1557253103850.png']
 
@@ -94,6 +95,8 @@ prefix = image_dir
 total_examples = 0
 top1_counter = 0
 top5_counter = 0
+import time
+start = time.time()
 for label_dirname in os.listdir(prefix):
     labels = set([int(x) for x in label_dirname.split('_')])
     for image_name in os.listdir(prefix + label_dirname):
@@ -103,10 +106,6 @@ for label_dirname in os.listdir(prefix):
         image = transformations(image)
         image = image.to(DEVICE)
         image = image.unsqueeze(0)
-        # image = torch.tensor(np.array(image))/255.
-        # image = image.permute(2, 0, 1)         # 3xHxW is expected
-        # image = normalize(image)
-        # image = image.cuda().unsqueeze(0)
         with torch.no_grad():
             try:
                 logits = model(image)
@@ -119,6 +118,10 @@ for label_dirname in os.listdir(prefix):
         if int(len(top5_preds.intersection(labels)) > 0) == 1:
             import pdb; pdb.set_trace()
         total_examples += 1
+    fraction_done = total_examples / TOTAL_SAMPLES
+    time_taken = time.time() - start
+    time_remaining = (1 - fraction_done) / fraction_done * time_taken
+    print('%s completed in %s, %s hours remaining' % (fraction_done, time_taken, time_remaining))
 
 print('total examples', total_examples)
 print('top1 counter', top1_counter)
@@ -127,19 +130,3 @@ print('top5 counter', top5_counter)
 print('top5 score', top5_counter / total_examples)
 
 
-
-def accuracy(output, target, topk=(1,)):
-    """Computes the accuracy over the k top predictions for the specified values of k"""
-    with torch.no_grad():
-        maxk = max(topk)
-        batch_size = target.size(0)
-
-        _, pred = output.topk(maxk, 1, True, True)
-        pred = pred.t()
-        correct = pred.eq(target.view(1, -1).expand_as(pred))
-
-        res = []
-        for k in topk:
-            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-            res.append(correct_k.mul_(100.0 / batch_size))
-        return res
