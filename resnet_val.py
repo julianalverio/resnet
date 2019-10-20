@@ -36,6 +36,8 @@ def accuracy(output, target):
     for idx, prediction in enumerate(pred):
         pred_set = set(prediction.cpu().numpy().tolist())
         target_set = set(target[idx].cpu().numpy().tolist())
+        if 740 in target_set:
+            import pdb; pdb.set_trace()
         if pred_set.intersection(target_set):
             top5_correct += 1
 
@@ -64,6 +66,8 @@ class Objectnet(Dataset):
             class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
             if class_name not in mapping:
                 continue
+            if 'drill' in class_name:
+                import pdb; pdb.set_trace()
             success_counter += 1
             labels = mapping[class_name]
 
@@ -85,8 +89,8 @@ class Objectnet(Dataset):
         return len(self.images)
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-WORKERS = 50
-BATCH_SIZE = 256
+WORKERS = 2
+BATCH_SIZE = 1
 TOTAL_SAMPLES = 40146
 
 model = torchvision.models.resnet101(pretrained=True)
