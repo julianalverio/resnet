@@ -88,8 +88,8 @@ class Objectnet(Dataset):
         return len(self.images)
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-WORKERS = 2
-BATCH_SIZE = 3
+WORKERS = 50
+BATCH_SIZE = 256
 TOTAL_SAMPLES = 40146
 
 model = torchvision.models.resnet101(pretrained=True)
