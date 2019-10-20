@@ -53,8 +53,8 @@ from torch.utils.data import Dataset
 
 
 def accuracy(output, target):
-    import pdb; pdb.set_trace()
-    something =  target[...] == 307
+    if torch.any(target[...] == 307):
+        import pdb; pdb.set_trace()
     if len(target.shape) != 1:
         import pdb; pdb.set_trace()
     with torch.no_grad():
