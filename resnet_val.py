@@ -120,7 +120,7 @@ for label_dirname in os.listdir(prefix):
         total_examples += 1
     fraction_done = total_examples / TOTAL_SAMPLES
     time_taken = time.time() - start
-    time_remaining = (1 - fraction_done) / fraction_done * time_taken
+    time_remaining = (1 - fraction_done) / fraction_done * time_taken / 60
     current_top1 = top1_counter / total_examples
     current_top5 = top5_counter / total_examples
     print('%s completed in %s, %s hours remaining. Current top1=%s, top5=%s' % (fraction_done, time_taken, time_remaining, current_top1, current_top5))
