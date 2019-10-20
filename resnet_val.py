@@ -79,7 +79,7 @@ class Objectnet(Dataset):
                     path = os.path.join(root, dirname, image_name)
                 except:
                     import pdb; pdb.set_trace()
-                images.append((path, labels))
+                self.images.append((path, labels))
             print(success_counter)
             import pdb; pdb.set_trace()
 
