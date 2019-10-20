@@ -66,8 +66,7 @@ def accuracy(output, target):
             import pdb; pdb.set_trace()
             current_prediction.unsqueeze(1).repeat(1, 2)
         import pdb; pdb.set_trace()
-        correct_count = ((current_prediction - target) == 0).nonzero()
-        # correct_count = current_prediction.eq(target).float().sum()
+        correct_count = ((current_prediction - target) == 0).float().nonzero()
         top5_correct += correct_count.item()
         if counter == 0:
             top1_correct += correct_count.item()
