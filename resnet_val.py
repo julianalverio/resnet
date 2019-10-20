@@ -75,7 +75,10 @@ class Objectnet(Dataset):
             labels = mapping[class_name]
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
-                path = os.path.join(root, dirname, image_name)
+                try:
+                    path = os.path.join(root, dirname, image_name)
+                except:
+                    import pdb; pdb.set_trace()
                 images.append((path, labels))
             print(success_counter)
             import pdb; pdb.set_trace()
