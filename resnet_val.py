@@ -52,28 +52,19 @@ image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 from torch.utils.data import Dataset
 
 
-
-
 def accuracy(output, target):
     with torch.no_grad():
-        _, pred = output.topk(5, 1, True, True)
         # pred is n x 5
-    total_correct = 0
+        _, pred = output.topk(5, 1, True, True)
+    top5_correct = 0
+    top1_correct = 0
     for counter in range(5):
         current_prediction = pred[:, counter]
-        import pdb; pdb.set_trace()
         correct_count = current_prediction.eq(target).float().sum()
-        total_correct += correct_count.item()
-
-
-    pred = pred.t()
-    correct = pred.eq(target.view(1, -1).expand_as(pred))
-
-    res = []
-    for k in topk:
-        correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-        res.append(correct_k)
-    return res
+        top5_correct += correct_count.item()
+        if counter == 0:
+            top1_correct += correct_count.item()
+    return top1_correct, top5_correct
 
 
 class Objectnet(Dataset):
