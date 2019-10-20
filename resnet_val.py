@@ -61,8 +61,13 @@ def accuracy(output, target):
     top1_correct = 0
 
     import pdb; pdb.set_trace()
-    for prediction in pred:
+    for idx, prediction in enumerate(pred):
         pred_set = set(prediction.cpu().numpy().tolist())
+        target_set = set(target[idx].cpu().numpy().tolist())
+        if pred_set.intersection(target_set):
+            top5_correct += 1
+        if prediction[0] in target_set:
+            top1_correct += 1
 
 
     for counter in range(5):
