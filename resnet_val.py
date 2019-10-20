@@ -74,8 +74,8 @@ class Objectnet(Dataset):
                 continue
             success_counter += 1
             labels = mapping[class_name]
-            images = os.listdir(os.path.join(root, label_dirname))
-            [self.images.append((os.path.join(root, label_dirname, image_name)), labels) for image_name in images]
+            images = os.listdir(os.path.join(root, dirname))
+            [self.images.append((os.path.join(root, dirname, image_name)), labels) for image_name in images]
             print(success_counter)
             import pdb; pdb.set_trace()
 
