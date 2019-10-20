@@ -67,8 +67,10 @@ import numpy as np
 from torchvision import transforms, datasets
 import torch.nn as nn
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
 model = torchvision.models.resnet101(pretrained=True)
-model = model.eval().cuda()
+model = model.eval().to(DEVICE)
 model = nn.DataParallel(model)
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
@@ -99,6 +101,7 @@ for label_dirname in os.listdir(prefix):
         image = Image.open(full_path)
         image = image.convert('RGB')
         image = transformations(image)
+        image = image.to(DEVICE)
         # image = torch.tensor(np.array(image))/255.
         # image = image.permute(2, 0, 1)         # 3xHxW is expected
         # image = normalize(image)
