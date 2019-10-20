@@ -37,9 +37,10 @@ def accuracy(output, target):
         pred_set = set(prediction.cpu().numpy().tolist())
         target_set = set(target[idx].cpu().numpy().tolist())
         if pred_set.intersection(target_set):
-            # import pdb; pdb.set_trace()
+            import pdb; pdb.set_trace()
             top5_correct += 1
         if prediction[0].item() in target_set:
+            import pdb; pdb.set_trace()
             top1_correct += 1
 
     return top1_correct, top5_correct
