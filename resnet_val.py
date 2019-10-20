@@ -165,9 +165,9 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     total_examples += batch.shape[0]
 
     time_taken = time.time() - start
-    print(len(val_loader))
     time_per_batch = time_taken / (batch_counter + 1)
     batches_remaining = len(val_loader) - (batch_counter + 1)
+    print(batches_remaining)
     time_remaining = time_per_batch * batches_remaining / 60  # in hours
     fraction_done = round(batch_counter / len(val_loader), 3)
     print('%s done, %s hours remaining' % (fraction_done, time_remaining))
