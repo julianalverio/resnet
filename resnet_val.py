@@ -66,6 +66,9 @@ for counter, label_list in enumerate(os.listdir(image_dir)):
     print('renaming %s to %s' % (label_list, counter))
     # os.rename(image_dir + label_list, image_dir + str(counter))
 print(lookup)
+import pickle
+with open('/storage/jalverio/second_mapping.pkl', 'wb') as f:
+    pickle.dump(lookup, f)
 import pdb; pdb.set_trace()
 
 
