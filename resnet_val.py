@@ -130,8 +130,8 @@ model = model.eval().to(DEVICE)
 model = nn.DataParallel(model)
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
-WORKERS = 0
-BATCH_SIZE = 64
+WORKERS = 25
+BATCH_SIZE = 256
 TOTAL_SAMPLES = 40146
 
 transformations = transforms.Compose([
