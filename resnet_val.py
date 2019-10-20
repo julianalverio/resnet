@@ -117,10 +117,6 @@ WORKERS = 0
 BATCH_SIZE = 64
 TOTAL_SAMPLES = 40146
 
-# blacklist = ['/storage/jalverio/groupedImagesClass/Ruler/53763_10_1557253103850.png']
-
-
-
 transformations = transforms.Compose([
         transforms.Resize(256),
         transforms.CenterCrop(224),
@@ -154,7 +150,7 @@ for label_dirname in os.listdir(prefix):
         image = Image.open(full_path)
         image = image.convert('RGB')
         image = transformations(image)
-        image = image.to(DEVICE)
+        # image = image.to(DEVICE)
         image = image.unsqueeze(0)
         with torch.no_grad():
             try:
