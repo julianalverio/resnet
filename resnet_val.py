@@ -137,7 +137,7 @@ model = nn.DataParallel(model)
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
 WORKERS = 50
-BATCH_SIZE = 64
+BATCH_SIZE = 1
 TOTAL_SAMPLES = 40146
 
 transformations = transforms.Compose([
@@ -161,6 +161,8 @@ total_top5 = 0
 total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
+    if batch_counter == 274:
+        import pdb; pdb.set_trace()
     batch = batch.to(DEVICE)
     if torch.any(labels[0] == 307):
         import pdb; pdb.set_trace()
