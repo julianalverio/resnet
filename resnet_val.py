@@ -53,6 +53,8 @@ from torch.utils.data import Dataset
 
 
 def accuracy(output, target):
+    import pdb; pdb.set_trace()
+    something =  target[...] == 307
     if len(target.shape) != 1:
         import pdb; pdb.set_trace()
     with torch.no_grad():
@@ -84,7 +86,6 @@ class Objectnet(Dataset):
 
     def __init__(self, root, transform, mapping):
         self.root = root
-        import pdb; pdb.set_trace()
         self.transform = transform
         self.images = []
         success_counter = 0
