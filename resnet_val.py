@@ -80,8 +80,8 @@ class Objectnet(Dataset):
                 except:
                     import pdb; pdb.set_trace()
                 self.images.append((path, labels))
-            print(success_counter)
-            import pdb; pdb.set_trace()
+        print(success_counter)
+        import pdb; pdb.set_trace()
 
     def __getitem__(self, index):
         full_path, labels = self.images[index]
