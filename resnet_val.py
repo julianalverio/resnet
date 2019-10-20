@@ -150,16 +150,17 @@ val_loader = torch.utils.data.DataLoader(
         batch_size=BATCH_SIZE, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
 
-total_top1 = torch.tensor(0)
-total_top5 = torch.tensor(0)
+total_top1 = 0
+total_top5 = 0
+total_examples = 0
 for batch, labels in val_loader:
     batch = batch.to(DEVICE)
     labels = labels[0].to(DEVICE)
     logits = model(batch)
     top1, top5 = accuracy(logits, labels, (1, 5))
-    total_top1 += top1
-    total_top5 += top5
-    
+    total_top1 += top1.item()
+    total_top5 += top5.item()
+    total_examples += batch.shape[0]
     import pdb; pdb.set_trace()
 
 
