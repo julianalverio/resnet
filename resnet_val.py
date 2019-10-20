@@ -110,12 +110,11 @@ for label_dirname in os.listdir(prefix):
             try:
                 logits = model(image)
             except:
+                import pdb; pdb.set_trace()
         top1_preds = set(np.array(torch.topk(logits, 1).indices.cpu()).tolist()[0])
         top5_preds = set(np.array(torch.topk(logits, 5).indices.cpu()).tolist()[0])
         top1_counter += int(len(top1_preds.intersection(labels)) > 0)
         top5_counter += int(len(top5_preds.intersection(labels)) > 0)
-        if int(len(top5_preds.intersection(labels)) > 0) == 1:
-            import pdb; pdb.set_trace()
         total_examples += 1
     fraction_done = total_examples / TOTAL_SAMPLES
     time_taken = time.time() - start
