@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 
 # OLD_DIR = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
@@ -66,11 +67,10 @@ def accuracy(output, target):
         if target.shape[1] != 1:
             import pdb; pdb.set_trace()
             current_prediction.repeat(1, 2)
-        import pdb; pdb.set_trace()
-        correct_count = ((current_prediction - target) == 0).float().nonzero()
-        top5_correct += correct_count.item()
+        correct_count = np.array(((current_prediction - target) == 0).float().nonzero().shape).prod()
+        top5_correct += correct_count
         if counter == 0:
-            top1_correct += correct_count.item()
+            top1_correct += correct_count
     return top1_correct, top5_correct
 
 
