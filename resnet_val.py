@@ -106,7 +106,7 @@ class Objectnet(Dataset):
         image = image.convert('RGB')
         image = self.transform(image)
         # image = image.to(DEVICE)
-        image = image.unsqueeze(0)
+        # image = image.unsqueeze(0)
         return image, labels
 
     def __len__(self):
