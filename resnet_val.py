@@ -60,7 +60,6 @@ def accuracy(output, target):
     top5_correct = 0
     top1_correct = 0
 
-    import pdb; pdb.set_trace()
     for idx, prediction in enumerate(pred):
         pred_set = set(prediction.cpu().numpy().tolist())
         target_set = set(target[idx].cpu().numpy().tolist())
@@ -69,16 +68,15 @@ def accuracy(output, target):
         if prediction[0] in target_set:
             top1_correct += 1
 
-
-    for counter in range(5):
-        current_prediction = pred[:, counter]
-        current_prediction = current_prediction.unsqueeze(1)
-        if target.shape[1] != 1:
-            current_prediction = current_prediction.repeat(1, 2)
-        correct_count = np.array(((current_prediction - target) == 0).float().nonzero().shape).prod()
-        top5_correct += correct_count
-        if counter == 0:
-            top1_correct += correct_count
+    # for counter in range(5):
+    #     current_prediction = pred[:, counter]
+    #     current_prediction = current_prediction.unsqueeze(1)
+    #     if target.shape[1] != 1:
+    #         current_prediction = current_prediction.repeat(1, 2)
+    #     correct_count = np.array(((current_prediction - target) == 0).float().nonzero().shape).prod()
+    #     top5_correct += correct_count
+    #     if counter == 0:
+    #         top1_correct += correct_count
     return top1_correct, top5_correct
 
 
