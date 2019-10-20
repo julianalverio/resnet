@@ -68,14 +68,16 @@ class Objectnet(Dataset):
         self.images = []
         success_counter = 0
         for dirname in os.listdir(root):
-            import pdb; pdb.set_trace()
             class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
             if class_name not in mapping:
                 continue
             success_counter += 1
             labels = mapping[class_name]
             images = os.listdir(os.path.join(root, dirname))
-            [self.images.append((os.path.join(root, dirname, image_name)), labels) for image_name in images]
+            import pdb; pdb.set_trace()
+            for image_name in images:
+                path = os.path.join(root, dirname, image_name)
+                images.append((path, labels))
             print(success_counter)
             import pdb; pdb.set_trace()
 
