@@ -86,7 +86,7 @@ class Objectnet(Dataset):
         image = Image.open(full_path)
         image = image.convert('RGB')
         image = self.transform(image)
-        image = image.to(DEVICE)
+        # image = image.to(DEVICE)
         image = image.unsqueeze(0)
         return image, labels
 
@@ -150,7 +150,7 @@ for label_dirname in os.listdir(prefix):
         image = Image.open(full_path)
         image = image.convert('RGB')
         image = transformations(image)
-        # image = image.to(DEVICE)
+        image = image.to(DEVICE)
         image = image.unsqueeze(0)
         with torch.no_grad():
             try:
