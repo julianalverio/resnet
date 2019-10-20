@@ -118,7 +118,9 @@ for label_dirname in os.listdir(prefix):
         total_examples += 1
     fraction_done = total_examples / TOTAL_SAMPLES
     time_taken = time.time() - start
-    time_remaining = (1 - fraction_done) / fraction_done * time_taken
+    time_per_sample = time_taken / total_examples
+    remaining_samples = TOTAL_SAMPLES - total_examples
+    time_remaining = time_per_sample * remaining_samples
     hours_remaining = time_remaining / 60
     current_top1 = top1_counter / total_examples
     current_top5 = top5_counter / total_examples
