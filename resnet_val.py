@@ -23,20 +23,20 @@ for json_dict in evaluated_str:
 
 
 # CODE TO RENAME ALL THE OBJECTNET DIRS TO IMAGENET INTS
-image_dir = '/storage/jalverio/groupedImagesClass/'
+image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 
-for objectnet_class in os.listdir(image_dir):
-    original_objectnet_class = objectnet_class
-    objectnet_class = objectnet_class.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
-    if objectnet_class not in mapping:
-        continue
-    imagenet_labels = mapping[objectnet_class]
-    new_name = str(imagenet_labels[0])
-    if len(imagenet_labels) > 1:
-        for label in imagenet_labels[1:]:
-            new_name += '_' + str(label)
+# for objectnet_class in os.listdir(image_dir):
+#     original_objectnet_class = objectnet_class
+#     objectnet_class = objectnet_class.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
+#     if objectnet_class not in mapping:
+#         continue
+#     imagenet_labels = mapping[objectnet_class]
+#     new_name = str(imagenet_labels[0])
+#     if len(imagenet_labels) > 1:
+#         for label in imagenet_labels[1:]:
+#             new_name += '_' + str(label)
+#
 
-    os.rename(image_dir + original_objectnet_class, image_dir + new_name)
 
 
 ## REMOVE THE CLASSES I DON'T NEED
@@ -121,7 +121,7 @@ transformations = transforms.Compose([
         normalize,
     ])
 
-image_dir = '/storage/jalverio/groupedImagesClass/'
+image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 
 dataset = Objectnet(image_dir, transformations, mapping)
 
