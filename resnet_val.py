@@ -123,8 +123,7 @@ transformations = transforms.Compose([
 
 image_dir = '/storage/jalverio/groupedImagesClass/'
 
-dataset = datasets.ImageFolder(image_dir, transformations)
-
+dataset = Objectnet(image_dir, transformations, mapping)
 
 val_loader = torch.utils.data.DataLoader(
         dataset,
