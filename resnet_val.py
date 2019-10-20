@@ -56,16 +56,23 @@ from torch.utils.data import Dataset
 
 def accuracy(output, target):
     with torch.no_grad():
-        import pdb; pdb.set_trace()
         _, pred = output.topk(5, 1, True, True)
-        pred = pred.t()
-        correct = pred.eq(target.view(1, -1).expand_as(pred))
+        # pred is n x 5
+    total_correct = 0
+    for counter in range(5):
+        current_prediction = pred[counter]
+        correct_count = current_prediction.eq(target).float().sum()
+        total_correct += correct_count.item()
 
-        res = []
-        for k in topk:
-            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-            res.append(correct_k)
-        return res
+
+    pred = pred.t()
+    correct = pred.eq(target.view(1, -1).expand_as(pred))
+
+    res = []
+    for k in topk:
+        correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+        res.append(correct_k)
+    return res
 
 
 class Objectnet(Dataset):
