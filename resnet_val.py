@@ -60,7 +60,6 @@ def accuracy(output, target, topk=(1,)):
         maxk = max(topk)
         batch_size = target.size(0)
 
-        import pdb; pdb.set_trace()
         _, pred = output.topk(maxk, 1, True, True)
         pred = pred.t()
         correct = pred.eq(target.view(1, -1).expand_as(pred))
@@ -96,10 +95,7 @@ class Objectnet(Dataset):
             labels = mapping[class_name]
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
-                try:
-                    path = os.path.join(root, dirname, image_name)
-                except:
-                    import pdb; pdb.set_trace()
+                path = os.path.join(root, dirname, image_name)
                 self.images.append((path, labels))
 
     def __getitem__(self, index):
@@ -163,7 +159,7 @@ for batch, labels in val_loader:
     top1, top5 = accuracy(logits, labels, (1, 5))
     total_top1 += top1
     total_top5 += top5
-
+    
     import pdb; pdb.set_trace()
 
 
