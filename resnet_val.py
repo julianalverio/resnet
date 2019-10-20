@@ -60,19 +60,18 @@ def accuracy(output, target):
         _, pred = output.topk(5, 1, True, True)
     top5_correct = 0
     top1_correct = 0
-    try:
-        for counter in range(5):
-            current_prediction = pred[:, counter]
-            if target.shape[1] != 1:
-                current_prediction.unsqueeze(1).repeat(1, 2)
-            correct_count = ((current_prediction - target) == 0).nonzero()
-            # correct_count = current_prediction.eq(target).float().sum()
-            top5_correct += correct_count.item()
-            if counter == 0:
-                top1_correct += correct_count.item()
-        return top1_correct, top5_correct
-    except:
+    for counter in range(5):
+        current_prediction = pred[:, counter]
+        if target.shape[1] != 1:
+            import pdb; pdb.set_trace()
+            current_prediction.unsqueeze(1).repeat(1, 2)
         import pdb; pdb.set_trace()
+        correct_count = ((current_prediction - target) == 0).nonzero()
+        # correct_count = current_prediction.eq(target).float().sum()
+        top5_correct += correct_count.item()
+        if counter == 0:
+            top1_correct += correct_count.item()
+    return top1_correct, top5_correct
 
 
 class Objectnet(Dataset):
