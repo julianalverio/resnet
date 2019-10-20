@@ -62,9 +62,10 @@ def accuracy(output, target):
     top1_correct = 0
     for counter in range(5):
         current_prediction = pred[:, counter]
+        current_prediction = current_prediction.unsqueeze(1)
         if target.shape[1] != 1:
             import pdb; pdb.set_trace()
-            current_prediction.unsqueeze(1).repeat(1, 2)
+            current_prediction.repeat(1, 2)
         import pdb; pdb.set_trace()
         correct_count = ((current_prediction - target) == 0).float().nonzero()
         top5_correct += correct_count.item()
