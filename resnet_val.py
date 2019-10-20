@@ -66,7 +66,7 @@ def accuracy(output, target):
         current_prediction = current_prediction.unsqueeze(1)
         if target.shape[1] != 1:
             import pdb; pdb.set_trace()
-            current_prediction.repeat(1, 2)
+            current_prediction = current_prediction.repeat(1, 2)
         correct_count = np.array(((current_prediction - target) == 0).float().nonzero().shape).prod()
         top5_correct += correct_count
         if counter == 0:
