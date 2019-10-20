@@ -58,21 +58,17 @@ import os
 #         shutil.rmtree(image_dir + objectnet_class)
 
 ### RENAME DIRECTORIES TO HAVE "LABEL" NAMES
-import os
-image_dir = '/storage/jalverio/groupedImagesClass/'
-lookup = dict()
-for counter, label_list in enumerate(os.listdir(image_dir)):
-    lookup[counter] = label_list
-    print('renaming %s to %s' % (label_list, counter))
-    os.rename(image_dir + label_list, image_dir + str(counter))
-print(lookup)
-import pickle
-with open('/storage/jalverio/second_mapping.pkl', 'wb') as f:
-    pickle.dump(lookup, f)
-import pdb; pdb.set_trace()
-
-
-
+# import os
+# image_dir = '/storage/jalverio/groupedImagesClass/'
+# lookup = dict()
+# for counter, label_list in enumerate(os.listdir(image_dir)):
+#     lookup[counter] = label_list
+#     print('renaming %s to %s' % (label_list, counter))
+#     os.rename(image_dir + label_list, image_dir + str(counter))
+# print(lookup)
+# import pickle
+# with open('/storage/jalverio/second_mapping.pkl', 'wb') as f:
+#     pickle.dump(lookup, f)
 
 
 
@@ -91,7 +87,6 @@ model = model.eval().to(DEVICE)
 model = nn.DataParallel(model)
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
-
 WORKERS = 0
 BATCH_SIZE = 64
 TOTAL_SAMPLES = 40146
@@ -107,8 +102,8 @@ transformations = transforms.Compose([
         normalize,
     ])
 
+image_dir = '/storage/jalverio/groupedImagesClass/'
 
-import pdb; pdb.set_trace()
 dataset = datasets.ImageFolder(image_dir, transformations)
 
 
@@ -116,7 +111,7 @@ val_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=BATCH_SIZE, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
-
+import pdb; pdb.set_trace()
 for batch, labels in val_loader:
     import pdb; pdb.set_trace()
 
