@@ -54,8 +54,6 @@ from torch.utils.data import Dataset
 
 
 def accuracy(output, target):
-    if target.shape[1] != 1:
-        import pdb; pdb.set_trace()
     with torch.no_grad():
         # pred is n x 5
         _, pred = output.topk(5, 1, True, True)
@@ -65,7 +63,6 @@ def accuracy(output, target):
         current_prediction = pred[:, counter]
         current_prediction = current_prediction.unsqueeze(1)
         if target.shape[1] != 1:
-            import pdb; pdb.set_trace()
             current_prediction = current_prediction.repeat(1, 2)
         correct_count = np.array(((current_prediction - target) == 0).float().nonzero().shape).prod()
         top5_correct += correct_count
