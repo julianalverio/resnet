@@ -159,8 +159,7 @@ total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
     batch = batch.to(DEVICE)
-    import pdb; pdb.set_trace()
-    if torch.any(labels == 307):
+    if torch.any(labels[0] == 307):
         import pdb; pdb.set_trace()
     labels = labels[0].to(DEVICE)
     with torch.no_grad():
