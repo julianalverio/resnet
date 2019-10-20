@@ -76,11 +76,8 @@ class Objectnet(Dataset):
             images = os.listdir(os.path.join(root, dirname))
             import pdb; pdb.set_trace()
             for image_name in images:
-                try:
-                    path = os.path.join(root, dirname, image_name)
-                except:
-                    import pdb; pdb.set_trace()
-                images.append((path, labels))
+                assert 'storage' in image_name
+                images.append((image_name, labels))
             print(success_counter)
             import pdb; pdb.set_trace()
 
