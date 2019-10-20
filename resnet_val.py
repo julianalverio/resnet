@@ -93,12 +93,7 @@ transformations = transforms.Compose([
 
 
 import pdb; pdb.set_trace()
-dataset = datasets.ImageFolder(image_dir, transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            normalize,
-        ]))
+dataset = datasets.ImageFolder(image_dir, transformations)
 
 
 val_loader = torch.utils.data.DataLoader(
