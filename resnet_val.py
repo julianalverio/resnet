@@ -153,7 +153,9 @@ val_loader = torch.utils.data.DataLoader(
 total_top1 = 0
 total_top5 = 0
 total_examples = 0
-for batch, labels in val_loader:
+import time
+start = time.time()
+for batch_counter, (batch, labels) in enumerate(val_loader):
     batch = batch.to(DEVICE)
     labels = labels[0].to(DEVICE)
     logits = model(batch)
@@ -161,7 +163,22 @@ for batch, labels in val_loader:
     total_top1 += top1.item()
     total_top5 += top5.item()
     total_examples += batch.shape[0]
-    import pdb; pdb.set_trace()
+
+    time_taken = time.time() - start
+    time_per_batch = time_taken / (batch_counter + 1)
+    batches_remaining = len(val_loader) - (batch_counter + 1)
+    time_remaining = time_per_batch * batches_remaining / 60  # in hours
+    fraction_done = round(batch_counter / len(val_loader), 3)
+    print('%s done, %s hours remaining' % (fraction_done, time_remaining))
+
+
+print('total examples', total_examples)
+print('total top5', total_top5)
+print('total top1', total_top1)
+print('top5 score', total_top5 / total_examples)
+print('top1 score', total_top1 / total_examples)
+
+import pdb; pdb.set_trace()
 
 
 
