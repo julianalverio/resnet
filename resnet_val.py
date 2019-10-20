@@ -63,7 +63,10 @@ def accuracy(output, target):
     try:
         for counter in range(5):
             current_prediction = pred[:, counter]
-            correct_count = current_prediction.eq(target).float().sum()
+            if target.shape[1] != 1:
+                current_prediction.unsqueeze(1).repeat(1, 2)
+            correct_count = ((current_prediction - target) == 0).nonzero()
+            # correct_count = current_prediction.eq(target).float().sum()
             top5_correct += correct_count.item()
             if counter == 0:
                 top1_correct += correct_count.item()
