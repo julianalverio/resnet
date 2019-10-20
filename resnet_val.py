@@ -91,6 +91,23 @@ transformations = transforms.Compose([
         normalize,
     ])
 
+
+import pdb; pdb.set_trace()
+val_loader = torch.utils.data.DataLoader(
+        datasets.ImageFolder(image_dir, transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            normalize,
+        ])),
+        batch_size=BATCH_SIZE, shuffle=False,
+        num_workers=WORKERS, pin_memory=True)
+
+
+
+
+
+
 prefix = image_dir
 total_examples = 0
 top1_counter = 0
