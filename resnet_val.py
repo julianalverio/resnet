@@ -54,13 +54,10 @@ from torch.utils.data import Dataset
 
 
 
-def accuracy(output, target, topk=(1,)):
-    """Computes the accuracy over the k top predictions for the specified values of k"""
+def accuracy(output, target):
     with torch.no_grad():
-        maxk = max(topk)
-        batch_size = target.size(0)
-
-        _, pred = output.topk(maxk, 1, True, True)
+        import pdb; pdb.set_trace()
+        _, pred = output.topk(5, 1, True, True)
         pred = pred.t()
         correct = pred.eq(target.view(1, -1).expand_as(pred))
 
@@ -68,7 +65,6 @@ def accuracy(output, target, topk=(1,)):
         for k in topk:
             correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
             res.append(correct_k)
-            # res.append(correct_k.mul_(100.0 / batch_size))
         return res
 
 
@@ -119,9 +115,10 @@ import torchvision
 import torch
 import os
 from PIL import Image
-import numpy as np
 from torchvision import transforms, datasets
 import torch.nn as nn
+import time
+
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -153,7 +150,6 @@ val_loader = torch.utils.data.DataLoader(
 total_top1 = 0
 total_top5 = 0
 total_examples = 0
-import time
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
     batch = batch.to(DEVICE)
@@ -165,13 +161,8 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     total_top5 += top5.item()
     total_examples += batch.shape[0]
 
-    time_taken = time.time() - start
-    time_per_batch = time_taken / (batch_counter + 1)
-    batches_remaining = len(val_loader) - (batch_counter + 1)
-    print(batches_remaining)
-    time_remaining = time_per_batch * batches_remaining / 60  # in hours
     fraction_done = round(batch_counter / len(val_loader), 3)
-    print('%s done, %s hours remaining' % (fraction_done, time_remaining))
+    print('%s done' % fraction_done)
 
 
 print('total examples', total_examples)
