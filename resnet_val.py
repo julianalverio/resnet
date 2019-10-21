@@ -71,15 +71,15 @@ class Objectnet(Dataset):
             success_counter += 1
             labels = mapping[class_name]
             new_labels = []
-            if 373 in labels:
-                import pdb; pdb.set_trace()
+            # if 373 in labels:
+            #     import pdb; pdb.set_trace()
             for label in labels:
-                new_labels.append(mapping2[label - 1])
+                new_labels.append(int(mapping2[label - 1]))
 
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
                 path = os.path.join(root, dirname, image_name)
-                self.images.append((path, labels))
+                self.images.append((path, new_labels))
 
     def __getitem__(self, index):
         full_path, labels = self.images[index]
