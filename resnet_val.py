@@ -12,8 +12,6 @@ import json
 
 with open('/storage/jalverio/pytorch_to_imagenet_2012_id.json') as f:
     mapping2 = json.load(f)
-import pdb; pdb.set_trace()
-
 
 
 # MAPPING FROM OBJECTNET CLASS TO IMAGENET INTEGER LABELS
@@ -31,10 +29,6 @@ for json_dict in evaluated_str:
     name = name.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
     mapping[name] = imagenet_ids
 
-
-
-
-
 def accuracy(output, target):
     with torch.no_grad():
         # pred is n x 5
@@ -45,8 +39,6 @@ def accuracy(output, target):
     for idx, prediction in enumerate(pred):
         pred_set = set(prediction.cpu().numpy().tolist())
         target_set = set(target[idx].cpu().numpy().tolist())
-        if 740 in target_set:
-            import pdb; pdb.set_trace()
         if pred_set.intersection(target_set):
             top5_correct += 1
 
@@ -66,7 +58,7 @@ class Objectnet(Dataset):
         PIL transforms
     """
 
-    def __init__(self, root, transform, mapping):
+    def __init__(self, root, transform, mapping, mapping2):
         self.root = root
         self.transform = transform
         self.images = []
@@ -75,10 +67,13 @@ class Objectnet(Dataset):
             class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
             if class_name not in mapping:
                 continue
-            if 'drill' in class_name:
-                import pdb; pdb.set_trace()
             success_counter += 1
             labels = mapping[class_name]
+            new_labels = []
+            if 373 in labels:
+                import pdb; pdb.set_trace()
+            for label in labels:
+                new_labels.append(mapping2[label - 1])
 
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
@@ -116,7 +111,7 @@ transformations = transforms.Compose([
         normalize,
     ])
 image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
-dataset = Objectnet(image_dir, transformations, mapping)
+dataset = Objectnet(image_dir, transformations, mapping, mapping2)
 val_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=BATCH_SIZE, shuffle=False,
