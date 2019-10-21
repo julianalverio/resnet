@@ -12,6 +12,7 @@ import json
 
 with open('/storage/jalverio/pytorch_to_imagenet_2012_id.json') as f:
     mapping2 = json.load(f)
+mapping2 = {v:k for k, v in mapping2.items()}
 
 
 # MAPPING FROM OBJECTNET CLASS TO IMAGENET INTEGER LABELS
