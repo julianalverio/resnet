@@ -98,7 +98,7 @@ WORKERS = 50
 BATCH_SIZE = 256
 TOTAL_SAMPLES = 40146
 
-model = torchvision.models.resnet101(pretrained=True)
+model = torchvision.models.resnet152(pretrained=True)
 model = model.eval().to(DEVICE)
 model = nn.DataParallel(model)
 
