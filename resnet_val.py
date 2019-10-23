@@ -11,8 +11,8 @@ import json
 # OLD_DIR = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 
 with open('/storage/jalverio/pytorch_to_imagenet_2012_id.json') as f:
-    mapping2 = json.load(f)
-mapping2 = {v:k for k, v in mapping2.items()}
+    torch2imagenet = json.load(f)
+imagenet2torch = {v:k for k, v in torch2imagenet.items()}
 
 
 # MAPPING FROM OBJECTNET CLASS TO IMAGENET INTEGER LABELS
@@ -61,7 +61,7 @@ class Objectnet(Dataset):
         PIL transforms
     """
 
-    def __init__(self, root, transform, mapping, mapping2):
+    def __init__(self, root, transform, mapping, imagenet2torch):
         self.root = root
         self.transform = transform
         self.images = []
@@ -74,7 +74,7 @@ class Objectnet(Dataset):
             labels = mapping[class_name]
             new_labels = []
             for label in labels:
-                new_labels.append(int(mapping2[label - 1]))
+                new_labels.append(int(imagenet2torch[label - 1]))
 
             for new_label in new_labels:
                 used_new_labels.add(new_label)
@@ -115,7 +115,7 @@ transformations = transforms.Compose([
 
 # PURE OBJECTNET STUFF
 # image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
-# dataset = Objectnet(image_dir, transformations, mapping, mapping2)
+# dataset = Objectnet(image_dir, transformations, mapping, imagenet2torch)
 # data_type = 'objectnet'
 # val_loader = torch.utils.data.DataLoader(
 #         dataset,
@@ -140,6 +140,9 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         labels = torch.stack(labels, dim=1).to(DEVICE)
     elif data_type == 'imagenet':
         import pdb; pdb.set_trace()
+        labels_list = torch.cat([torch.tensor(imagenet2torch[x.item()]) for x in labels])
+
+
     with torch.no_grad():
         logits = model(batch)
         top1, top5 = accuracy(logits, labels)
