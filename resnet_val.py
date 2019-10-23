@@ -116,6 +116,7 @@ transformations = transforms.Compose([
 # PURE OBJECTNET STUFF
 # image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 # dataset = Objectnet(image_dir, transformations, mapping, mapping2)
+# data_type = 'objectnet'
 # val_loader = torch.utils.data.DataLoader(
 #         dataset,
 #         batch_size=BATCH_SIZE, shuffle=False,
@@ -123,6 +124,7 @@ transformations = transforms.Compose([
 
 imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
 imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
+data_type = 'imagenet'
 val_loader = torch.utils.data.DataLoader(imagenet_data,
                                           batch_size=BATCH_SIZE,
                                           shuffle=False,
@@ -134,7 +136,10 @@ total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
     batch = batch.to(DEVICE)
-    labels = torch.stack(labels, dim=1).to(DEVICE)
+    if data_type == 'objectnet':
+        labels = torch.stack(labels, dim=1).to(DEVICE)
+    elif data_type == 'imagenet:':
+        import pdb; pdb.set_trace()
     with torch.no_grad():
         logits = model(batch)
         top1, top5 = accuracy(logits, labels)
