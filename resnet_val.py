@@ -122,6 +122,7 @@ transformations = transforms.Compose([
 #         num_workers=WORKERS, pin_memory=True)
 
 imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
+import pdb; pdb.set_trace()
 imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
 # imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
 val_loader = torch.utils.data.DataLoader(imagenet_data,
