@@ -112,12 +112,22 @@ transformations = transforms.Compose([
         transforms.ToTensor(),
         normalize,
     ])
-image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
-dataset = Objectnet(image_dir, transformations, mapping, mapping2)
-val_loader = torch.utils.data.DataLoader(
-        dataset,
-        batch_size=BATCH_SIZE, shuffle=False,
-        num_workers=WORKERS, pin_memory=True)
+
+# PURE OBJECTNET STUFF
+# image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
+# dataset = Objectnet(image_dir, transformations, mapping, mapping2)
+# val_loader = torch.utils.data.DataLoader(
+#         dataset,
+#         batch_size=BATCH_SIZE, shuffle=False,
+#         num_workers=WORKERS, pin_memory=True)
+
+import pdb; pdb.set_trace()
+imagenet_data = torchvision.datasets.ImageNet('/storage/jalverio/resnet/imagenet_val/', split='val', download=True)
+import pdb; pdb.set_trace()
+data_loader = torch.utils.data.DataLoader(imagenet_data,
+                                          batch_size=BATCH_SIZE,
+                                          shuffle=False,
+                                          num_workers=WORKERS)
 
 total_top1 = 0
 total_top5 = 0
