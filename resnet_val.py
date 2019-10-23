@@ -7,6 +7,7 @@ from torchvision import transforms
 import torch.nn as nn
 import time
 import json
+import pickle
 
 # OLD_DIR = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 
@@ -55,7 +56,6 @@ def accuracy_imagenet(output, target):
         maxk = 5
         batch_size = target.size(0)
 
-        import pdb; pdb.set_trace()
         _, pred = output.topk(maxk, 1, True, True)
         pred = pred.t()
         correct = pred.eq(target.view(1, -1).expand_as(pred))
@@ -133,7 +133,7 @@ transformations = transforms.Compose([
 
 
 
-# PURE OBJECTNET STUFF
+## PURE OBJECTNET STUFF
 # image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
 # dataset = Objectnet(image_dir, transformations, mapping, imagenet2torch)
 # data_type = 'objectnet'
@@ -141,10 +141,12 @@ transformations = transforms.Compose([
 #         dataset,
 #         batch_size=BATCH_SIZE, shuffle=False,
 #         num_workers=WORKERS, pin_memory=True)
+## END OF PURE OBJECTNET STUFF
 
 
-
-
+## PURE IMAGENET STUFF
+with open('/storage/jalverio/resnet/used_new_labels.pkl', 'wb') as f:
+    valid_labels = pickle.load(f)
 imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
 imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
 data_type = 'imagenet'
@@ -152,7 +154,7 @@ val_loader = torch.utils.data.DataLoader(imagenet_data,
                                           batch_size=BATCH_SIZE,
                                           shuffle=False,
                                           num_workers=WORKERS)
-
+## END OF PURE IMAGENET STUFF
 
 
 total_top1 = 0
@@ -168,6 +170,13 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         top1, top5 = accuracy_objectnet(logits, labels)
     elif data_type == 'imagenet':
         labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0).to(DEVICE)
+        test = labels not in valid_labels
+        import pdb; pdb.set_trace()
+
+        labels_list = [int(imagenet2torch[x.item()]) for x in labels]
+        bad_idxs = sorted([idx for idx, label in enumerate(labels_list) if label not in valid_labels])
+
+        labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0).to(DEVICE)
         top1, top5 = accuracy_imagenet(logits, labels)
 
     total_top1 += top1
@@ -182,7 +191,3 @@ print('total top5', total_top5)
 print('total top1', total_top1)
 print('top5 score', total_top5 / total_examples)
 print('top1 score', total_top1 / total_examples)
-
-import pickle
-with open('/storage/jalverio/resnet/used_new_labels.pkl', 'wb') as f:
-    pickle.dump(used_new_labels, f)
