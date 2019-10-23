@@ -163,6 +163,7 @@ total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
     batch = batch.to(DEVICE)
+    batch_size = batch.shape[0]
     with torch.no_grad():
         logits = model(batch)
     if data_type == 'objectnet':
@@ -170,18 +171,22 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         top1, top5 = accuracy_objectnet(logits, labels)
     elif data_type == 'imagenet':
         labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0).to(DEVICE)
-        test = labels not in valid_labels
         import pdb; pdb.set_trace()
 
         labels_list = [int(imagenet2torch[x.item()]) for x in labels]
-        bad_idxs = sorted([idx for idx, label in enumerate(labels_list) if label not in valid_labels])
+        good_idxs = sorted([idx for idx, label in enumerate(labels_list) if label in valid_labels])
 
-        labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0).to(DEVICE)
-        top1, top5 = accuracy_imagenet(logits, labels)
+        good_logits = logits[good_idxs]
+        good_labels = labels[good_idxs]
+
+        if not good_logits:
+            top1, top5, batch_size = 0, 0, 0
+        else:
+            top1, top5 = accuracy_imagenet(logits, labels)
 
     total_top1 += top1
     total_top5 += top5
-    total_examples += batch.shape[0]
+    total_examples += batch_size
 
     fraction_done = round(batch_counter / len(val_loader), 3)
     print('%s done' % fraction_done)
