@@ -49,6 +49,8 @@ def accuracy(output, target):
     return top1_correct, top5_correct
 
 
+used_new_labels = set()
+
 class Objectnet(Dataset):
     """Dataset wrapping images and target labels for Kaggle - Planet Amazon from Space competition.
 
@@ -71,10 +73,11 @@ class Objectnet(Dataset):
             success_counter += 1
             labels = mapping[class_name]
             new_labels = []
-            # if 373 in labels:
-            #     import pdb; pdb.set_trace()
             for label in labels:
                 new_labels.append(int(mapping2[label - 1]))
+
+            for new_label in new_labels:
+                used_new_labels.add(new_label)
 
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
@@ -86,8 +89,6 @@ class Objectnet(Dataset):
         image = Image.open(full_path)
         image = image.convert('RGB')
         image = self.transform(image)
-        # image = image.to(DEVICE)
-        # image = image.unsqueeze(0)
         return image, labels
 
     def __len__(self):
@@ -140,3 +141,7 @@ print('total top5', total_top5)
 print('total top1', total_top1)
 print('top5 score', total_top5 / total_examples)
 print('top1 score', total_top1 / total_examples)
+
+import pickle
+with open('/storage/jalverio/resnet/used_new_labels.pkl', 'wb') as f:
+    pickle.dump(used_new_labels, f)
