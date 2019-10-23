@@ -121,7 +121,7 @@ transformations = transforms.Compose([
 #         batch_size=BATCH_SIZE, shuffle=False,
 #         num_workers=WORKERS, pin_memory=True)
 
-imagenet_data = torchvision.datasets.ImageNet('/storage/jalverio/resnet/imagenet_val/', split='val', download=False)
+imagenet_data = torchvision.datasets.ImageNet('/storage/jalverio/resnet/imagenet_val/', split='val', download=True)
 val_loader = torch.utils.data.DataLoader(imagenet_data,
                                           batch_size=BATCH_SIZE,
                                           shuffle=False,
