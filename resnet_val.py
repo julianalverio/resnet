@@ -49,7 +49,7 @@ def accuracy_objectnet(output, target):
     return top1_correct, top5_correct
 
 
-def accuracy(output, target):
+def accuracy_imagenet(output, target):
     topk = (1, 5)
     with torch.no_grad():
         maxk = 5
@@ -168,7 +168,7 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         top1, top5 = accuracy_objectnet(logits, labels)
     elif data_type == 'imagenet':
         labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0)
-        top1, top5 = accuracy(logits, labels)
+        top1, top5 = accuracy_imagenet(logits, labels)
 
     total_top1 += top1
     total_top5 += top5
