@@ -138,7 +138,7 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     batch = batch.to(DEVICE)
     if data_type == 'objectnet':
         labels = torch.stack(labels, dim=1).to(DEVICE)
-    elif data_type == 'imagenet:':
+    elif data_type == 'imagenet':
         import pdb; pdb.set_trace()
     with torch.no_grad():
         logits = model(batch)
