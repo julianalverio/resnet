@@ -174,8 +174,6 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
 
         labels_list = [int(imagenet2torch[x.item()]) for x in labels]
         good_idxs = sorted([idx for idx, label in enumerate(labels_list) if label in valid_labels])
-        if good_idxs:
-            import pdb; pdb.set_trace()
 
         good_logits = logits[good_idxs]
         good_labels = labels[good_idxs]
