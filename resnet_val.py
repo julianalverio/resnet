@@ -30,7 +30,7 @@ for json_dict in evaluated_str:
     name = name.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
     mapping[name] = imagenet_ids
 
-def accuracy(output, target, data_type):
+def accuracy_objectnet(output, target):
     with torch.no_grad():
         # pred is n x 5
         _, pred = output.topk(5, 1, True, True)
@@ -39,11 +39,7 @@ def accuracy(output, target, data_type):
 
     for idx, prediction in enumerate(pred):
         pred_set = set(prediction.cpu().numpy().tolist())
-        if data_type == 'objectnet':
-            target_set = set(target[idx].cpu().numpy().tolist())
-        elif data_type == 'imagenet':
-            import pdb; pdb.set_trace()
-            target_set = set()
+        target_set = set(target[idx].cpu().numpy().tolist())
         if pred_set.intersection(target_set):
             top5_correct += 1
 
@@ -51,6 +47,24 @@ def accuracy(output, target, data_type):
             top1_correct += 1
 
     return top1_correct, top5_correct
+
+
+def accuracy(output, target):
+    topk = (1, 5)
+    with torch.no_grad():
+        maxk = 5
+        batch_size = target.size(0)
+
+        import pdb; pdb.set_trace()
+        _, pred = output.topk(maxk, 1, True, True)
+        pred = pred.t()
+        correct = pred.eq(target.view(1, -1).expand_as(pred))
+
+        res = []
+        for k in topk:
+            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+            res.append(correct_k.mul_(100.0 / batch_size))
+        return res
 
 
 used_new_labels = set()
@@ -147,13 +161,17 @@ total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
     batch = batch.to(DEVICE)
-    if data_type == 'objectnet':
-        labels = torch.stack(labels, dim=1).to(DEVICE)
-    elif data_type == 'imagenet':
-        labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0)
     with torch.no_grad():
         logits = model(batch)
-        top1, top5 = accuracy(logits, labels, data_type)
+    if data_type == 'objectnet':
+        labels = torch.stack(labels, dim=1).to(DEVICE)
+        top1, top5 = accuracy_objectnet(logits, labels)
+    elif data_type == 'imagenet':
+        labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0)
+
+
+    if data_type == 'objectnet':
+    elif
     total_top1 += top1
     total_top5 += top5
     total_examples += batch.shape[0]
