@@ -133,28 +133,28 @@ transformations = transforms.Compose([
 
 
 
-# PURE OBJECTNET STUFF
-image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
-dataset = Objectnet(image_dir, transformations, mapping, imagenet2torch)
-data_type = 'objectnet'
-val_loader = torch.utils.data.DataLoader(
-        dataset,
-        batch_size=BATCH_SIZE, shuffle=False,
-        num_workers=WORKERS, pin_memory=True)
-# END OF PURE OBJECTNET STUFF
+# # PURE OBJECTNET STUFF
+# image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
+# dataset = Objectnet(image_dir, transformations, mapping, imagenet2torch)
+# data_type = 'objectnet'
+# val_loader = torch.utils.data.DataLoader(
+#         dataset,
+#         batch_size=BATCH_SIZE, shuffle=False,
+#         num_workers=WORKERS, pin_memory=True)
+# # END OF PURE OBJECTNET STUFF
 
 
-## PURE IMAGENET STUFF
-# with open('/storage/jalverio/resnet/used_new_labels.pkl', 'rb') as f:
-#     valid_labels = pickle.load(f)
-# imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
-# imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
-# data_type = 'imagenet'
-# val_loader = torch.utils.data.DataLoader(imagenet_data,
-#                                           batch_size=BATCH_SIZE,
-#                                           shuffle=False,
-#                                           num_workers=WORKERS)
-## END OF PURE IMAGENET STUFF
+# PURE IMAGENET STUFF
+with open('/storage/jalverio/resnet/used_new_labels.pkl', 'rb') as f:
+    valid_labels = pickle.load(f)
+imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
+imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
+data_type = 'imagenet'
+val_loader = torch.utils.data.DataLoader(imagenet_data,
+                                          batch_size=BATCH_SIZE,
+                                          shuffle=False,
+                                          num_workers=WORKERS)
+# END OF PURE IMAGENET STUFF
 
 
 total_top1 = 0
@@ -192,7 +192,7 @@ print('total top1', total_top1)
 print('top5 score', total_top5 / total_examples)
 print('top1 score', total_top1 / total_examples)
 
-with open('/storage/jalverio/resnet/used_new_labels.pkl', 'wb') as f:
-    pickle.dump(used_new_labels, f)
-
-import pdb; pdb.set_trace()
+if data_type == 'objectnet':
+    with open('/storage/jalverio/resnet/used_new_labels.pkl', 'wb') as f:
+        pickle.dump(used_new_labels, f)
+    import pdb; pdb.set_trace()
