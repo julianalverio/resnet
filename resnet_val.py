@@ -167,7 +167,7 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         labels = torch.stack(labels, dim=1).to(DEVICE)
         top1, top5 = accuracy_objectnet(logits, labels)
     elif data_type == 'imagenet':
-        labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0)
+        labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0).to(DEVICE)
         top1, top5 = accuracy_imagenet(logits, labels)
 
     total_top1 += top1
