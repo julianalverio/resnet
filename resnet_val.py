@@ -200,4 +200,5 @@ print('top1 score', total_top1 / total_examples)
 if data_type == 'objectnet':
     with open('/storage/jalverio/resnet/used_new_labels.pkl', 'wb') as f:
         pickle.dump(used_new_labels, f)
-    import pdb; pdb.set_trace()
+
+import pdb; pdb.set_trace()
