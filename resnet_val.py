@@ -118,8 +118,8 @@ class Objectnet(Dataset):
         return len(self.images)
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-WORKERS = 100
-BATCH_SIZE = 512
+WORKERS = 50
+BATCH_SIZE = 256
 TOTAL_SAMPLES = 40146
 
 model = torchvision.models.resnet152(pretrained=True)
@@ -167,6 +167,7 @@ total_top5 = 0
 total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
+    labels = labels.to(DEVICE)
     if data_type == 'imagenet':
         labels_list = labels.clone().cpu().numpy().tolist()
         good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
@@ -174,7 +175,6 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         labels = labels[good_idxs]
     if data_type == 'objectnet':
         labels = torch.stack(labels, dim=1)
-    labels = labels.to(DEVICE)
 
     batch = batch.to(DEVICE)
     batch_size = batch.shape[0]
