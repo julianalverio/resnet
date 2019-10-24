@@ -150,6 +150,7 @@ with open('/storage/jalverio/resnet/used_new_labels.pkl', 'rb') as f:
 imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
 imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
 data_type = 'imagenet'
+imagenet2torch[544] = -1
 val_loader = torch.utils.data.DataLoader(imagenet_data,
                                           batch_size=BATCH_SIZE,
                                           shuffle=False,
