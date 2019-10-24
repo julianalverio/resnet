@@ -113,8 +113,8 @@ class Objectnet(Dataset):
         return len(self.images)
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-WORKERS = 50
-BATCH_SIZE = 256
+WORKERS = 100
+BATCH_SIZE = 512
 TOTAL_SAMPLES = 40146
 
 model = torchvision.models.resnet152(pretrained=True)
@@ -180,7 +180,14 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
                 except KeyError:
                     import pdb; pdb.set_trace()
 
-        labels_list = [int(imagenet2torch[x.item()]) for x in labels]
+        try:
+            labels_list = [int(imagenet2torch[x.item()]) for x in labels]
+        except:
+            for x in labels:
+                try:
+                    out = imagenet2torch(x.item())
+                except:
+                    import pdb; pdb.set_trace()
         good_idxs = sorted([idx for idx, label in enumerate(labels_list) if label in valid_labels])
 
         good_logits = logits[good_idxs]
