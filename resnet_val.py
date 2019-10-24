@@ -181,6 +181,8 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
             top1, top5, batch_size = 0, 0, 0
         else:
             top1, top5 = accuracy_imagenet(logits, labels)
+            top1 = top1.item()
+            top5 = top5.item()
 
     total_top1 += top1
     total_top5 += top5
