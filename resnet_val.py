@@ -57,8 +57,8 @@ def accuracy_objectnet(output, target):
 
 def accuracy_imagenet(output, target):
     import pdb; pdb.set_trace()
-    top5_results = torch.zeros_like(target)
-    top1_results = torch.zeros_like(target)
+    top5_results = torch.zeros_like(target, dtype=torch.float32)
+    top1_results = torch.zeros_like(target, dtype=torch.float32)
     for k in range(5):
         preds = output[:, k]
         k_score = preds.eq(target).float()
