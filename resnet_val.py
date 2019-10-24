@@ -183,7 +183,7 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
             logits = model(batch)
             top1, top5 = accuracy(logits, labels, data_type)
         else:
-            top1, top5 = 0, 0
+            top1, top5, batch_size = 0, 0, 0
 
     total_top1 += top1
     total_top5 += top5
