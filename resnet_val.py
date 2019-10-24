@@ -56,22 +56,19 @@ def accuracy_objectnet(output, target):
 
 
 def accuracy_imagenet(output, target):
-    topk = (1, 5)
-    with torch.no_grad():
-        maxk = 5
-        batch_size = target.size(0)
+    import pdb; pdb.set_trace()
+    top5_results = torch.zeros_like(target)
+    top1_results = torch.zeros_like(target)
+    for k in range(5):
+        preds = output[:, k]
+        k_score = preds.eq(target).float()
+        top5_results += k_score
+        if k == 0:
+            top1_results += k_score
+    top1_score = (top1_results > 0).float().sum()
+    top5_score = (top5_results > 0).float().sum()
 
-        _, pred = output.topk(maxk, 1, True, True)
-        pred = pred.t()
-        correct = pred.eq(target.view(1, -1).expand_as(pred))
 
-        res = []
-        for k in topk:
-            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-            res.append(correct_k.mul_(100.0 / batch_size).item())
-        if batch_size == 30 and res[1] > 30:
-            import pdb; pdb.set_trace()
-        return res
 
 
 used_new_labels = set()
