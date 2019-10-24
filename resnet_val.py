@@ -160,6 +160,7 @@ val_loader = torch.utils.data.DataLoader(imagenet_data,
                                           num_workers=WORKERS)
 # END OF PURE IMAGENET STUFF
 
+all_logits = []
 
 total_top1 = 0
 total_top5 = 0
@@ -181,6 +182,7 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     with torch.no_grad():
         if batch.shape[0] != 0:
             logits = model(batch)
+            all_logits.append(logits)
             top1, top5 = accuracy(logits, labels, data_type)
         else:
             top1, top5, batch_size = 0, 0, 0
@@ -199,4 +201,8 @@ print('top1 score', total_top1 / total_examples)
 if data_type == 'objectnet':
     with open('/storage/jalverio/resnet/used_new_labels.pkl', 'wb') as f:
         pickle.dump(used_new_labels, f)
+
 import pdb; pdb.set_trace()
+stacked_logits = torch.cat(all_logits, dim=0)
+with open('/storage/jalverio/resnet/all_logits.pkl', 'wb') as f:
+    pickle.dump(f)
