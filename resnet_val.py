@@ -151,6 +151,7 @@ transformations = transforms.Compose([
 with open('/storage/jalverio/resnet/used_new_labels.pkl', 'rb') as f:
     valid_labels = pickle.load(f)
 imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
+import pdb; pdb.set_trace()
 imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
 data_type = 'imagenet'
 val_loader = torch.utils.data.DataLoader(imagenet_data,
