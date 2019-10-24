@@ -69,6 +69,8 @@ def accuracy_imagenet(output, target):
         for k in topk:
             correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
             res.append(correct_k.mul_(100.0 / batch_size).item())
+        if batch_size == 30 and res[1] > 30:
+            import pdb; pdb.set_trace()
         return res
 
 
