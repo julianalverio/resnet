@@ -56,32 +56,28 @@ def accuracy_objectnet(output, target):
 
 
 def accuracy_imagenet(output, target):
-    topk = (1, 5)
-    with torch.no_grad():
-        maxk = 5
-        batch_size = target.size(0)
+    # topk = (1, 5)
+    # with torch.no_grad():
+    #     maxk = 5
+    #     batch_size = target.size(0)
+    #
+    #     _, pred = output.topk(maxk, 1, True, True)
+    #     pred = pred.t()
+    #     correct = pred.eq(target.view(1, -1).expand_as(pred))
+    #
+    #     res = []
+    #     for k in topk:
+    #         correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+    #         res.append(correct_k.mul_(100.0 / batch_size).item())
+    #     if batch_size == 30 and res[1] > 30:
+    #         import pdb;
+    #         pdb.set_trace()
 
-        _, pred = output.topk(maxk, 1, True, True)
-        pred = pred.t()
-        correct = pred.eq(target.view(1, -1).expand_as(pred))
-
-        res = []
-        for k in topk:
-            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-            res.append(correct_k.mul_(100.0 / batch_size).item())
-        if batch_size == 30 and res[1] > 30:
-            import pdb;
-            pdb.set_trace()
-
-
-
-
-
-
+    predictions = output.topk(5, 1, True, True)
     top5_results = torch.zeros_like(target, dtype=torch.float32)
     top1_results = torch.zeros_like(target, dtype=torch.float32)
     for k in range(5):
-        preds = output[:, k]
+        preds = predictions[:, k]
         k_score = preds.eq(target).float()
         top5_results += k_score
         if k == 0:
