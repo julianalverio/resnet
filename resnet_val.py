@@ -180,9 +180,12 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     batch_size = batch.shape[0]
     with torch.no_grad():
         import pdb; pdb.set_trace()
-        logits = model(batch)
+        if batch:
+            logits = model(batch)
+            top1, top5 = accuracy(logits, labels, data_type)
+        else:
+            top1, top5 = 0, 0
 
-    top1, top5 = accuracy(logits, labels, data_type)
     total_top1 += top1
     total_top5 += top5
     total_examples += batch_size
