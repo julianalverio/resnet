@@ -116,7 +116,7 @@ class Objectnet(Dataset):
         return len(self.images)
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-WORKERS = 60
+WORKERS = 100
 BATCH_SIZE = 512
 TOTAL_SAMPLES = 40146
 
