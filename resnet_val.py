@@ -191,11 +191,10 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     print('%s done' % fraction_done)
 
 print('total examples', total_examples)
-print('total top5', total_top5)
-print('total top1', total_top1)
 print('top5 score', total_top5 / total_examples)
 print('top1 score', total_top1 / total_examples)
 
 if data_type == 'objectnet':
     with open('/storage/jalverio/resnet/used_new_labels.pkl', 'wb') as f:
         pickle.dump(used_new_labels, f)
+import pdb; pdb.set_trace()
