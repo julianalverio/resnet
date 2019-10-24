@@ -9,8 +9,6 @@ import time
 import json
 import pickle
 
-# OLD_DIR = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
-
 with open('/storage/jalverio/pytorch_to_imagenet_2012_id.json') as f:
     torch2imagenet = json.load(f)
 imagenet2torch = {v:k for k, v in torch2imagenet.items()}
@@ -31,10 +29,12 @@ for json_dict in evaluated_str:
     name = name.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
     mapping[name] = imagenet_ids
 
+
 def accuracy(logits, target, data_type):
     if data_type == 'imagenet':
         return accuracy_imagenet(logits, target)
     return accuracy_objectnet(logits, target)
+
 
 def accuracy_objectnet(output, target):
     with torch.no_grad():
@@ -199,5 +199,3 @@ print('top1 score', total_top1 / total_examples)
 if data_type == 'objectnet':
     with open('/storage/jalverio/resnet/used_new_labels.pkl', 'wb') as f:
         pickle.dump(used_new_labels, f)
-
-import pdb; pdb.set_trace()
