@@ -173,6 +173,7 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     elif data_type == 'imagenet':
         # import pdb; pdb.set_trace()
         # labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0).to(DEVICE)
+        labels = labels.to(DEVICE)
 
         labels_list = labels.cpu().numpy().tolist()
         good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
