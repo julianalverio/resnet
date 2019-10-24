@@ -31,6 +31,11 @@ for json_dict in evaluated_str:
     name = name.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
     mapping[name] = imagenet_ids
 
+def accuracy(logits, target, data_type):
+    if data_type == 'imagenet':
+        return accuracy_imagenet(logits, target)
+    return accuracy_objectnet(logits, target)
+
 def accuracy_objectnet(output, target):
     with torch.no_grad():
         # pred is n x 5
@@ -63,7 +68,7 @@ def accuracy_imagenet(output, target):
         res = []
         for k in topk:
             correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-            res.append(correct_k.mul_(100.0 / batch_size))
+            res.append(correct_k.mul_(100.0 / batch_size).item())
         return res
 
 
@@ -163,28 +168,21 @@ total_top5 = 0
 total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
-    batch = batch.to(DEVICE)
-    batch_size = batch.shape[0]
     labels = labels.to(DEVICE)
-    with torch.no_grad():
-        logits = model(batch)
-    if data_type == 'objectnet':
-        labels = torch.stack(labels, dim=1)
-        top1, top5 = accuracy_objectnet(logits, labels)
-    elif data_type == 'imagenet':
+    if data_type == 'imagenet':
         labels_list = labels.clone().cpu().numpy().tolist()
         good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
+        batch = batch[good_idxs]
+        labels = labels[good_idxs]
+    if data_type == 'objectnet':
+        labels = torch.stack(labels, dim=1)
 
-        good_logits = logits[good_idxs]
-        good_labels = labels[good_idxs]
-        if good_logits.shape[0] == 0:
-            top1, top5, batch_size = 0, 0, 0
-            batch_size = batch.shape[0]
-        else:
-            top1, top5 = accuracy_imagenet(logits, labels)
-            top1 = top1.item()
-            top5 = top5.item()
+    batch = batch.to(DEVICE)
+    batch_size = batch.shape[0]
+    with torch.no_grad():
+        logits = model(batch)
 
+    top1, top5 = accuracy(logits, labels, data_type)
     total_top1 += top1
     total_top5 += top5
     total_examples += batch_size
