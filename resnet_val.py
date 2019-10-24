@@ -158,7 +158,6 @@ val_loader = torch.utils.data.DataLoader(imagenet_data,
 # END OF PURE IMAGENET STUFF
 
 
-import pdb; pdb.set_trace()
 total_top1 = 0
 total_top5 = 0
 total_examples = 0
