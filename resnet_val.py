@@ -185,6 +185,9 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         else:
             top1, top5, batch_size = 0, 0, 0
 
+    if top5 > batch_size:
+        import pdb; pdb.set_trace()
+
     total_top1 += top1
     total_top5 += top5
     total_examples += batch_size
