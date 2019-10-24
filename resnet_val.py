@@ -73,8 +73,8 @@ def accuracy_imagenet(output, target):
     #         import pdb;
     #         pdb.set_trace()
 
-    predictions = output.topk(5, 1, True, True)
-    import pdb; pdb.set_trace()
+    _, predictions = output.topk(5, 1, True, True)
+    # import pdb; pdb.set_trace()
     top5_results = torch.zeros_like(target, dtype=torch.float32)
     top1_results = torch.zeros_like(target, dtype=torch.float32)
     for k in range(5):
