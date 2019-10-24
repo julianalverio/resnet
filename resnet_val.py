@@ -160,6 +160,7 @@ val_loader = torch.utils.data.DataLoader(imagenet_data,
 # END OF PURE IMAGENET STUFF
 
 all_logits = []
+all_labels = []
 
 total_top1 = 0
 total_top5 = 0
@@ -173,6 +174,7 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
         batch = batch[good_idxs]
         labels = labels[good_idxs]
+        all_labels.append(labels)
     if data_type == 'objectnet':
         labels = torch.stack(labels, dim=1)
 
@@ -202,6 +204,7 @@ if data_type == 'objectnet':
         pickle.dump(used_new_labels, f)
 
 import pdb; pdb.set_trace()
-stacked_logits = torch.cat(all_logits, dim=0)
-with open('/storage/jalverio/resnet/all_logits.pkl', 'wb') as f:
-    pickle.dump(f)
+stacked_labels = torch.cat(all_labels, dim=0)
+# stacked_logits = torch.cat(all_logits, dim=0)
+# with open('/storage/jalverio/resnet/all_logits.pkl', 'wb') as f:
+#     pickle.dump(all_l.f)
