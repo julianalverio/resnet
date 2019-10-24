@@ -56,25 +56,7 @@ def accuracy_objectnet(output, target):
 
 
 def accuracy_imagenet(output, target):
-    # topk = (1, 5)
-    # with torch.no_grad():
-    #     maxk = 5
-    #     batch_size = target.size(0)
-    #
-    #     _, pred = output.topk(maxk, 1, True, True)
-    #     pred = pred.t()
-    #     correct = pred.eq(target.view(1, -1).expand_as(pred))
-    #
-    #     res = []
-    #     for k in topk:
-    #         correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-    #         res.append(correct_k.mul_(100.0 / batch_size).item())
-    #     if batch_size == 30 and res[1] > 30:
-    #         import pdb;
-    #         pdb.set_trace()
-
     _, predictions = output.topk(5, 1, True, True)
-    # import pdb; pdb.set_trace()
     top5_results = torch.zeros_like(target, dtype=torch.float32)
     top1_results = torch.zeros_like(target, dtype=torch.float32)
     for k in range(5):
@@ -85,11 +67,6 @@ def accuracy_imagenet(output, target):
             top1_results += k_score
     top1_score = (top1_results > 0).float().sum()
     top5_score = (top5_results > 0).float().sum()
-
-
-
-
-
     return top1_score.item(), top5_score.item()
 
 
@@ -151,7 +128,7 @@ model = nn.DataParallel(model)
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
 transformations = transforms.Compose([
-        transforms.Resize(256),
+        transforms.Resize(224),
         transforms.CenterCrop(224),
         transforms.ToTensor(),
         normalize,
