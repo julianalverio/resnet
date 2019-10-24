@@ -179,6 +179,7 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         good_labels = labels[good_idxs]
         if good_logits.shape[0] == 0:
             top1, top5, batch_size = 0, 0, 0
+            batch_size = batch.shape[0]
         else:
             top1, top5 = accuracy_imagenet(logits, labels)
             top1 = top1.item()
