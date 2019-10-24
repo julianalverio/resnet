@@ -171,28 +171,13 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         labels = torch.stack(labels, dim=1).to(DEVICE)
         top1, top5 = accuracy_objectnet(logits, labels)
     elif data_type == 'imagenet':
-        try:
-            labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0).to(DEVICE)
-        except KeyError:
-            for x in labels:
-                try:
-                    out = imagenet2torch[x.item()]
-                except KeyError:
-                    import pdb; pdb.set_trace()
+        labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0).to(DEVICE)
 
-        try:
-            labels_list = [int(imagenet2torch[x.item()]) for x in labels]
-        except:
-            for x in labels:
-                try:
-                    out = imagenet2torch(x.item())
-                except:
-                    import pdb; pdb.set_trace()
-        good_idxs = sorted([idx for idx, label in enumerate(labels_list) if label in valid_labels])
+        labels_list = labels.cpu().numpy().tolist()
+        good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
 
         good_logits = logits[good_idxs]
         good_labels = labels[good_idxs]
-
         if good_logits.shape[0] == 0:
             top1, top5, batch_size = 0, 0, 0
         else:
