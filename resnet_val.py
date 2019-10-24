@@ -64,13 +64,10 @@ def accuracy_imagenet(output, target):
         top5_results += k_score
         if k == 0:
             top1_results += k_score
-    import pdb;
-    pdb.set_trace()
-
     top1_score = (top1_results > 0).float().sum()
     top5_score = (top5_results > 0).float().sum()
 
-
+    return top1_score.item(), top5_score.item()
 
 
 used_new_labels = set()
@@ -185,9 +182,6 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
             top1, top5 = accuracy(logits, labels, data_type)
         else:
             top1, top5, batch_size = 0, 0, 0
-
-    if top5 > batch_size:
-        import pdb; pdb.set_trace()
 
     total_top1 += top1
     total_top5 += top5
