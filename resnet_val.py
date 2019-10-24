@@ -150,7 +150,7 @@ with open('/storage/jalverio/resnet/used_new_labels.pkl', 'rb') as f:
 imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
 imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
 data_type = 'imagenet'
-imagenet2torch[544] = -1
+# imagenet2torch[544] = -1
 val_loader = torch.utils.data.DataLoader(imagenet_data,
                                           batch_size=BATCH_SIZE,
                                           shuffle=False,
@@ -172,7 +172,8 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         labels = torch.stack(labels, dim=1).to(DEVICE)
         top1, top5 = accuracy_objectnet(logits, labels)
     elif data_type == 'imagenet':
-        labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0).to(DEVICE)
+        import pdb; pdb.set_trace()
+        # labels = torch.stack([torch.tensor(int(imagenet2torch[x.item()])) for x in labels], dim=0).to(DEVICE)
 
         labels_list = labels.cpu().numpy().tolist()
         good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
