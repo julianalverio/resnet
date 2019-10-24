@@ -155,7 +155,6 @@ with open('/storage/jalverio/resnet/used_new_labels.pkl', 'rb') as f:
 imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
 imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
 data_type = 'imagenet'
-# imagenet2torch[544] = -1
 val_loader = torch.utils.data.DataLoader(imagenet_data,
                                           batch_size=BATCH_SIZE,
                                           shuffle=False,
@@ -168,7 +167,6 @@ total_top5 = 0
 total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
-    labels = labels.to(DEVICE)
     if data_type == 'imagenet':
         labels_list = labels.clone().cpu().numpy().tolist()
         good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
@@ -176,6 +174,7 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         labels = labels[good_idxs]
     if data_type == 'objectnet':
         labels = torch.stack(labels, dim=1)
+    labels = labels.to(DEVICE)
 
     batch = batch.to(DEVICE)
     batch_size = batch.shape[0]
