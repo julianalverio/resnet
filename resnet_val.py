@@ -140,7 +140,7 @@ transformations = transforms.Compose([
 
 
 # PURE OBJECTNET STUFF
-image_dir = '/storage/dmayo2/groupedImagesClass_v1/groupedImagesClass'
+image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
 dataset = Objectnet(image_dir, transformations, mapping, imagenet2torch)
 data_type = 'objectnet'
 val_loader = torch.utils.data.DataLoader(
