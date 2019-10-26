@@ -75,9 +75,6 @@ def accuracy_imagenet(output, target):
     return top1_score.item(), top5_score.item()
 
 
-used_new_labels = set()
-
-
 class Objectnet(Dataset):
     """Dataset wrapping images and target labels for Kaggle - Planet Amazon from Space competition.
 
@@ -102,9 +99,6 @@ class Objectnet(Dataset):
             new_labels = []
             for label in labels:
                 new_labels.append(int(imagenet2torch[label - 1]))
-
-            for new_label in new_labels:
-                used_new_labels.add(new_label)
 
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
@@ -154,6 +148,7 @@ transformations = transforms.Compose([
 
 
 # PURE IMAGENET STUFF
+import pdb; pdb.set_trace()
 valid_labels = set(objectnet2imagenet.values())
 imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
 imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
@@ -209,8 +204,5 @@ print('total examples', total_examples)
 print('top5 score', total_top5 / total_examples)
 print('top1 score', total_top1 / total_examples)
 
-if data_type == 'objectnet':
-    with open('/storage/jalverio/resnet/used_new_labels.pkl', 'wb') as f:
-        pickle.dump(used_new_labels, f)
 
 import pdb; pdb.set_trace()
