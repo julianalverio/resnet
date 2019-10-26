@@ -169,7 +169,6 @@ start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
     labels = labels.to(DEVICE)
     if data_type == 'imagenet':
-        # pass
         labels_list = labels.clone().cpu().numpy().tolist()
         good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
         batch = batch[good_idxs]
