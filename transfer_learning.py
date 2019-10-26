@@ -42,10 +42,6 @@ for json_dict in evaluated_str:
     objectnet2imagenet[name] = imagenet_ids
 
 
-
-
-
-
 class Objectnet(Dataset):
     """Dataset wrapping images and target labels for Kaggle - Planet Amazon from Space competition.
 
@@ -62,6 +58,7 @@ class Objectnet(Dataset):
         self.images = []
         success_counter = 0
         for dirname in os.listdir(root):
+            import pdb; pdb.set_trace()
             class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
             if class_name not in objectnet2imagenet:
                 continue
