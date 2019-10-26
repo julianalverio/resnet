@@ -170,14 +170,18 @@ total_top5 = 0
 total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
-    labels = labels[0].to(DEVICE)
     if data_type == 'imagenet':
+        labels = labels[0].to(DEVICE)
         labels_list = labels.clone().cpu().numpy().tolist()
         good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
         batch = batch[good_idxs]
         labels = labels[good_idxs]
         all_labels.append(labels)
     if data_type == 'objectnet':
+        try:
+            labels = labels[0].to(DEVICE)
+        except:
+            import pdb; pdb.set_trace()
         labels = torch.stack(labels, dim=1)
 
     batch = batch.to(DEVICE)
