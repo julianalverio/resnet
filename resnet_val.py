@@ -179,9 +179,10 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
         all_labels.append(labels)
     if data_type == 'objectnet':
         try:
-            full_labels = labels
+            if len(labels) > 1:
+                import pdb; pdb.set_trace()
             labels = labels[0].to(DEVICE)
-            torch.stack(labels, dim=1)
+            # torch.stack(labels, dim=1)
         except:
             import pdb; pdb.set_trace()
 
