@@ -16,10 +16,10 @@ with open('/storage/jalverio/resnet/pytorch_to_imagenet_2012_id_correct.json') a
     imagenet2torch = {v: k for k, v in torch2imagenet.items()}
 
 
-# MAPPING FROM OBJECTNET CLASS TO IMAGENET INTEGER LABELS
+# MAKE OBJECTNET2IMAGENET
 with open('/storage/jalverio/resnet/objectnet_to_imagenet_mapping', 'r') as f:
     evaluated_str = eval(f.read())
-mapping = dict()
+objectnet2imagenet = dict()
 for json_dict in evaluated_str:
     for k, v in json_dict.items():
         if k == 'name':
@@ -29,7 +29,7 @@ for json_dict in evaluated_str:
     if not imagenet_ids:
         continue
     name = name.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
-    mapping[name] = imagenet_ids
+    objectnet2imagenet[name] = imagenet_ids
 
 
 def accuracy(logits, target, data_type):
@@ -88,17 +88,17 @@ class Objectnet(Dataset):
         PIL transforms
     """
 
-    def __init__(self, root, transform, mapping, imagenet2torch):
+    def __init__(self, root, transform, objectnet2imagenet, imagenet2torch):
         self.root = root
         self.transform = transform
         self.images = []
         success_counter = 0
         for dirname in os.listdir(root):
             class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
-            if class_name not in mapping:
+            if class_name not in objectnet2imagenet:
                 continue
             success_counter += 1
-            labels = mapping[class_name]
+            labels = objectnet2imagenet[class_name]
             new_labels = []
             for label in labels:
                 new_labels.append(int(imagenet2torch[label - 1]))
@@ -144,7 +144,7 @@ transformations = transforms.Compose([
 
 # # PURE OBJECTNET STUFF
 # image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
-# dataset = Objectnet(image_dir, transformations, mapping, imagenet2torch)
+# dataset = Objectnet(image_dir, transformations, objectnet2imagenet, imagenet2torch)
 # data_type = 'objectnet'
 # val_loader = torch.utils.data.DataLoader(
 #         dataset,
