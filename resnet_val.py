@@ -154,8 +154,7 @@ transformations = transforms.Compose([
 
 
 # PURE IMAGENET STUFF
-with open('/storage/jalverio/resnet/used_new_labels.pkl', 'rb') as f:
-    valid_labels = pickle.load(f)
+valid_labels = set(objectnet2imagenet.values())
 imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
 imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
 data_type = 'imagenet'

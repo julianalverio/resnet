@@ -42,8 +42,7 @@ for json_dict in evaluated_str:
     objectnet2imagenet[name] = imagenet_ids
 
 
-import pdb; pdb.set_trace()
-set(objectnet2imagenet.keys())
+
 
 
 
@@ -88,6 +87,28 @@ class Objectnet(Dataset):
         return len(self.images)
 
 
+def accuracy_objectnet(output, target):
+    with torch.no_grad():
+        # pred is n x 5
+        _, pred = output.topk(5, 1, True, True)
+    top5_correct = 0
+    top1_correct = 0
+
+    for idx, prediction in enumerate(pred):
+        pred_set = set(prediction.cpu().numpy().tolist())
+        try:
+            target_set = set([target[idx].cpu().numpy().tolist()])
+        except:
+            import pdb; pdb.set_trace()
+        if pred_set.intersection(target_set):
+            top5_correct += 1
+
+        if prediction[0].item() in target_set:
+            top1_correct += 1
+
+    return top1_correct, top5_correct
+
+
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 WORKERS = 100
 BATCH_SIZE = 512
@@ -108,7 +129,28 @@ val_loader = torch.utils.data.DataLoader(
         batch_size=BATCH_SIZE, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
 
-all_classes = []
+N_EXAMPLES = 1
+
+all_classes = list(set(objectnet2imagenet.keys()))
+quotas = dict()
+total_top1, total_top5 = 0, 0
+total_examples = 0
+for class_int in all_classes:
+    quotas[class_int] = 0
 for batch_counter, (batch, labels) in enumerate(val_loader):
-    import pdb; pdb.set_trace()
+    valid_idxs = []
+    for idx, label in enumerate(labels):
+        if quotas[label] < N_EXAMPLES:
+            valid_idxs.append(idx)
+            quotas[label] += 1
+        labels = labels[valid_idxs]
+        batch = batch[valid_idxs]
+    if not batch:
+        continue
+    logits = model(batch)
+    top1, top5 = accuracy_objectnet(logits, labels)
+    total_top1 += top1
+    total_top5 += top5
+    total_examples += batch.shape[0]
+
 
