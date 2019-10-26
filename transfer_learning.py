@@ -10,6 +10,7 @@ import time
 import json
 import pickle
 
+
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
 transformations = transforms.Compose([
@@ -39,6 +40,12 @@ for json_dict in evaluated_str:
         continue
     name = name.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
     objectnet2imagenet[name] = imagenet_ids
+
+
+import pdb; pdb.set_trace()
+set(objectnet2imagenet.keys())
+
+
 
 class Objectnet(Dataset):
     """Dataset wrapping images and target labels for Kaggle - Planet Amazon from Space competition.
