@@ -176,7 +176,10 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     if data_type == 'imagenet':
         labels = labels[0].to(DEVICE)
         labels_list = labels.clone().cpu().numpy().tolist()
-        good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
+        try:
+            good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
+        except:
+            import pdb; pdb.set_trace()
         batch = batch[good_idxs]
         labels = labels[good_idxs]
         all_labels.append(labels)
