@@ -15,11 +15,12 @@ WORKERS = 100
 BATCH_SIZE = 512
 
 model = torchvision.models.resnet152(pretrained=True)
+for param in model.parameters():
+    param.requires_grad = False
 model.fc = nn.Linear(2048, 1000, bias=True)
 
 import pdb; pdb.set_trace()
-for param in model.parameters():
-    param.requires_grad = False
+
 
 
 import pdb; pdb.set_trace()
