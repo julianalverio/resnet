@@ -152,5 +152,10 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     total_top1 += top1
     total_top5 += top5
     total_examples += batch.shape[0]
+    fraction_done = round(batch_counter / len(val_loader), 3)
+    print('%s done' % fraction_done)
 
+print('total examples', total_examples)
+print('top5 score', total_top5 / total_examples)
+print('top1 score', total_top1 / total_examples)
 
