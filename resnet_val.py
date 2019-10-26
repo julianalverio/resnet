@@ -16,7 +16,7 @@ imagenet2torch = {v:k for k, v in torch2imagenet.items()}
 
 # MAPPING FROM OBJECTNET CLASS TO IMAGENET INTEGER LABELS
 with open('/storage/jalverio/resnet/objectnet_to_imagenet_mapping', 'r') as f:
-    objectnet2imagenet_json = json.load(f)
+    evaluated_str = eval(f.read())
 import pdb; pdb.set_trace()
 mapping = dict()
 for json_dict in evaluated_str:
