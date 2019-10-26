@@ -170,8 +170,7 @@ total_top5 = 0
 total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
-    import pdb; pdb.set_trace()
-    labels = labels.to(DEVICE)
+    labels = labels[0].to(DEVICE)
     if data_type == 'imagenet':
         labels_list = labels.clone().cpu().numpy().tolist()
         good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
