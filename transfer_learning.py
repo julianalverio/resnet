@@ -65,9 +65,6 @@ class Objectnet(Dataset):
             for label in labels:
                 new_labels.append(int(imagenet2torch[label - 1]))
 
-            for new_label in new_labels:
-                used_new_labels.add(new_label)
-
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
                 path = os.path.join(root, dirname, image_name)
