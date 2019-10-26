@@ -170,6 +170,7 @@ total_top5 = 0
 total_examples = 0
 start = time.time()
 for batch_counter, (batch, labels) in enumerate(val_loader):
+    import pdb; pdb.set_trace()
     labels = labels.to(DEVICE)
     if data_type == 'imagenet':
         labels_list = labels.clone().cpu().numpy().tolist()
@@ -206,7 +207,3 @@ if data_type == 'objectnet':
         pickle.dump(used_new_labels, f)
 
 import pdb; pdb.set_trace()
-stacked_labels = torch.cat(all_labels, dim=0)
-# stacked_logits = torch.cat(all_logits, dim=0)
-# with open('/storage/jalverio/resnet/all_logits.pkl', 'wb') as f:
-#     pickle.dump(all_l.f)
