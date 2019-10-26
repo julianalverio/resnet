@@ -40,7 +40,6 @@ for json_dict in evaluated_str:
         continue
     name = name.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
     objectnet2imagenet[name] = imagenet_ids
-imagenet2objectnet = {v:k for k,v in objectnet2imagenet.items()}
 
 
 class Objectnet(Dataset):
