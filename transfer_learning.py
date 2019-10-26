@@ -142,9 +142,9 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     labels = labels[0]
     import pdb; pdb.set_trace()
     for idx, label in enumerate(labels):
-        if quotas[label] < N_EXAMPLES:
+        if quotas[label.item()] < N_EXAMPLES:
             valid_idxs.append(idx)
-            quotas[label] += 1
+            quotas[label.item()] += 1
         labels = labels[valid_idxs]
         batch = batch[valid_idxs]
     if not batch:
