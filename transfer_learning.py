@@ -137,7 +137,6 @@ total_top1, total_top5 = 0, 0
 total_examples = 0
 for class_int in all_classes:
     quotas[class_int] = 0
-import pdb; pdb.set_trace()
 
 for batch_counter, (batch, labels) in enumerate(val_loader):
     valid_idxs = []
