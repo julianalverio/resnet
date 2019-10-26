@@ -134,7 +134,7 @@ N_EXAMPLES = 1
 all_classes = set()
 for label_list in objectnet2imagenet.values():
     for label in label_list:
-        all_classes.append(label)
+        all_classes.add(label)
 
 quotas = dict()
 total_top1, total_top5 = 0, 0
