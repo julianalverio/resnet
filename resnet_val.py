@@ -47,8 +47,10 @@ def accuracy_objectnet(output, target):
 
     for idx, prediction in enumerate(pred):
         pred_set = set(prediction.cpu().numpy().tolist())
-        import pdb; pdb.set_trace()
-        target_set = set(target[idx].cpu().numpy().tolist())
+        try:
+            target_set = set(target[idx].cpu().numpy().tolist())
+        except:
+            import pdb; pdb.set_trace()
         if pred_set.intersection(target_set):
             top5_correct += 1
 
