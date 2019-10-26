@@ -139,6 +139,7 @@ for class_int in all_classes:
     quotas[class_int] = 0
 for batch_counter, (batch, labels) in enumerate(val_loader):
     valid_idxs = []
+    labels = labels[0]
     import pdb; pdb.set_trace()
     for idx, label in enumerate(labels):
         if quotas[label] < N_EXAMPLES:
