@@ -149,7 +149,8 @@ transformations = transforms.Compose([
 
 # PURE IMAGENET STUFF
 import pdb; pdb.set_trace()
-valid_labels = set(objectnet2imagenet.values())
+something = list(objectnet2imagenet.values())
+valid_labels = set(list(objectnet2imagenet.values()))
 imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
 imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
 data_type = 'imagenet'
