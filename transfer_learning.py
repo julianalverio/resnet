@@ -131,7 +131,11 @@ val_loader = torch.utils.data.DataLoader(
 
 N_EXAMPLES = 1
 
-all_classes = list(set(objectnet2imagenet.keys()))
+all_classes = set()
+for label_list in objectnet2imagenet.values():
+    for label in label_list:
+        all_classes.append(label)
+
 quotas = dict()
 total_top1, total_top5 = 0, 0
 total_examples = 0
