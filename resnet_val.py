@@ -9,15 +9,16 @@ import time
 import json
 import pickle
 
-with open('/storage/jalverio/pytorch_to_imagenet_2012_id.json') as f:
+
+with open('/storage/jalverio/resnet/pytorch_to_imagenet_2012_id_correct.json') as f:
     torch2imagenet = json.load(f)
-imagenet2torch = {v:k for k, v in torch2imagenet.items()}
+    torch2imagenet = {int(k): int(v) for k, v in torch2imagenet.items()}
+    imagenet2torch = {v: k for k, v in torch2imagenet.items()}
 
 
 # MAPPING FROM OBJECTNET CLASS TO IMAGENET INTEGER LABELS
 with open('/storage/jalverio/resnet/objectnet_to_imagenet_mapping', 'r') as f:
     evaluated_str = eval(f.read())
-import pdb; pdb.set_trace()
 mapping = dict()
 for json_dict in evaluated_str:
     for k, v in json_dict.items():
@@ -72,6 +73,7 @@ def accuracy_imagenet(output, target):
 
 
 used_new_labels = set()
+
 
 class Objectnet(Dataset):
     """Dataset wrapping images and target labels for Kaggle - Planet Amazon from Space competition.
