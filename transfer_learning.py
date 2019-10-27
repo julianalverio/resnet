@@ -43,6 +43,7 @@ with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
 
 
+
 class Objectnet(Dataset):
     def __init__(self, root, transform, objectnet2torch, num_examples, test, overlap):
         self.root = root
