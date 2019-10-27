@@ -136,7 +136,7 @@ NUM_EXAMPLES = 1
 
 # Let's build objectnet2torch! :D
 object2torch = dict()
-for k, v in objectnet2imagenet:
+for k, v in objectnet2imagenet.items():
     torch_labels = []
     for label in v:
         torch_labels.append(imagenet2torch[label])
