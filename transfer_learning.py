@@ -248,6 +248,7 @@ SAVER = Saver(N_EXAMPLES, total_classes)
 # THIS DOES NOT USE BATCHING TO ALLOW FOR BETTER LOGGING
 def evaluate():
     total_top1, total_top5 = 0, 0
+    total_examples = 0
     score_dict = dict()
     for class_name in VALID_CLASSES:
         score_dict[on2onlabel[class_name]] = np.zeros((2,))
@@ -261,7 +262,7 @@ def evaluate():
         # score_dict[labels.item()] += accuracy_results
         total_top1 += top1
         total_top5 += top5
-    total_examples = len(test_loader)
+        total_examples += batch.shape[0]
     top1_score = total_top1 / total_examples
     top5_score = total_top5 / total_examples
     SAVER.write_evaluation_record(top1_score, top5_score)
