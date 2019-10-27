@@ -134,9 +134,16 @@ class Saver(object):
         self.records = []
         self.n_examples = n_examples
         self.num_classes = num_classes
+        self.training_top1 = []
+        self.training_top5 = []
 
     def write_record(self, record):
         self.records.append(record)
+
+    def write_training_record(self, results):
+        top1, top5 = results
+        self.training_top1.append(top1)
+        self.training_top5.append(top5)
 
     def write_to_disk(self):
         name = '%s_examples_%s_classes_%s_epochs' % (self.n_examples, self.num_classes, len(self.records))
@@ -211,24 +218,32 @@ total_top1, total_top5, total_examples = 0, 0, 0
 try:
     for epoch in range(50):
         total_examples = 0
+        total_training_top1 = 0
+        total_training_top5 = 0
         print('starting epoch %s' % epoch)
         for batch_counter, (batch, labels) in enumerate(val_loader):
             labels = labels.to(DEVICE)
             batch = batch.to(DEVICE)
             logits = model(batch)
             # training accuracy per class not needed
+            top1, top5 = accuracy_objectnet(logits, labels)
+            total_training_top1 += top1
+            total_training_top5 += top5
             loss = criterion(logits, labels)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
             total_examples += batch.shape[0]
 
+        print('training top1 score: %s' % total_training_top1 / total_examples)
+        print('training top5 score: %s' % total_training_top5 / total_examples)
         top1_score, top5_score = evaluate()
         if top5_score > top_score:
             top_score = top5_score
         print('top1 score: %s' % top1_score)
         print('top5 score: %s' % top5_score)
         print('best top5 score: %s' % top_score)
+        SAVER.write_to_disk()
 except:
     pass
 
