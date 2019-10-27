@@ -311,7 +311,6 @@ total_top1 = 0
 total_top5 = 0
 total_examples = 0
 model = torch.load('/tmp/julian_model').eval().to(DEVICE)
-import pdb; pdb.set_trace()
 for batch, labels in test_loader:
     labels = labels.to(DEVICE)
     batch = batch.to(DEVICE)
