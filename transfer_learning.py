@@ -110,7 +110,8 @@ for class_int in all_classes:
 optimizer = Adam(model.parameters(), lr=0.0003)
 all_batches = []
 import pdb; pdb.set_trace()
-first_batch = next(val_loader)
+for batch, labels in val_loader:
+    pass
 for batch_counter, (batch, labels) in enumerate(val_loader):
     valid_idxs = []
     labels = labels[0]
