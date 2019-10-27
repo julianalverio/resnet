@@ -185,6 +185,7 @@ def evaluate():
     score_dict = dict()
     for class_name in VALID_CLASSES:
         score_dict[on2onlabel[class_name]] = np.zeros((2,))
+    import pdb; pdb.set_trace()
     for batch, labels in test_loader:
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
@@ -219,12 +220,12 @@ for epoch in range(50):
         optimizer.step()
         total_examples += batch.shape[0]
 
-    import pdb; pdb.set_trace()
-    top1_score, current_accuracy = evaluate()
-    if current_accuracy > top_score:
-        top_score = current_accuracy
+    top1_score, top5_score = evaluate()
+    if top5_score > top_score:
+        top_score = top5_score
     print('top1 score: %s' % top1_score)
-    print('top5 score: %s' % current_accuracy)
+    print('top5 score: %s' % top5_score)
+    print('best top5 score: %s' % top_score)
 
 SAVER.write_to_disk()
 print('BEST top5', top_score)
