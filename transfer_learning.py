@@ -214,8 +214,7 @@ for epoch in range(50):
     for batch_counter, (batch, labels) in enumerate(val_loader):
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
-        with torch.no_grad():
-            logits = model(batch)
+        logits = model(batch)
         loss = criterion(logits, labels)
         optimizer.zero_grad()
         loss.backward()
