@@ -61,6 +61,7 @@ class Objectnet(Dataset):
                 path = os.path.join(root, dirname, image_name)
                 self.images.append((path, label))
         import pdb; pdb.set_trace()
+
         print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
         self.n_per_class(num_examples, test)
 
@@ -78,11 +79,11 @@ class Objectnet(Dataset):
             if not test:
                 if quotas[objectnet_label] < num_examples:
                     quotas[objectnet_label] += 1
-                    remaining_images.append((path, label_list))
+                    remaining_images.append((path, objectnet_label))
             else:
                 if quotas[objectnet_label] < num_examples * 2:
                     if quotas[objectnet_label] >= num_examples:
-                        remaining_images.append((path, label_list))
+                        remaining_images.append((path, objectnet_label))
                     quotas[objectnet_label] += 1
         self.images = remaining_images
         print('Removed some examples. %s classes and %s examples remaining.' % (len(valid_classes), len(self.images)))
