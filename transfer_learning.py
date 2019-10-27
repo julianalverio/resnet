@@ -185,10 +185,10 @@ def evaluate():
     score_dict = dict()
     for class_name in VALID_CLASSES:
         score_dict[on2onlabel[class_name]] = np.zeros((2,))
-    import pdb; pdb.set_trace()
     for batch, labels in test_loader:
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
+        import pdb; pdb.set_trace()
         with torch.no_grad():
             logits = model(batch)
         accuracy_results = accuracy_objectnet_nobatch(logits, labels)
