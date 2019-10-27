@@ -208,25 +208,28 @@ previous_accuracy = 0.
 top_score = 0.
 total_top1, total_top5, total_examples = 0, 0, 0
 
-for epoch in range(50):
-    total_examples = 0
-    print('starting epoch %s' % epoch)
-    for batch_counter, (batch, labels) in enumerate(val_loader):
-        labels = labels.to(DEVICE)
-        batch = batch.to(DEVICE)
-        logits = model(batch)
-        loss = criterion(logits, labels)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        total_examples += batch.shape[0]
+try:
+    for epoch in range(50):
+        total_examples = 0
+        print('starting epoch %s' % epoch)
+        for batch_counter, (batch, labels) in enumerate(val_loader):
+            labels = labels.to(DEVICE)
+            batch = batch.to(DEVICE)
+            logits = model(batch)
+            loss = criterion(logits, labels)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            total_examples += batch.shape[0]
 
-    top1_score, top5_score = evaluate()
-    if top5_score > top_score:
-        top_score = top5_score
-    print('top1 score: %s' % top1_score)
-    print('top5 score: %s' % top5_score)
-    print('best top5 score: %s' % top_score)
+        top1_score, top5_score = evaluate()
+        if top5_score > top_score:
+            top_score = top5_score
+        print('top1 score: %s' % top1_score)
+        print('top5 score: %s' % top5_score)
+        print('best top5 score: %s' % top_score)
+except:
+    pass
 
 SAVER.write_to_disk()
 print('BEST top5', top_score)
