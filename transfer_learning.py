@@ -236,7 +236,7 @@ val_loader = torch.utils.data.DataLoader(
 
 test_loader = torch.utils.data.DataLoader(
         dataset_test,
-        batch_size=512, shuffle=False,
+        batch_size=256, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
 
 SAVER = Saver(N_EXAMPLES, total_classes)
