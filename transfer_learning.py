@@ -130,6 +130,7 @@ def evaluate():
         total_top1 += top1
         total_top5 += top5
         total_examples += batch.shape[0]
+        print(total_examples)
     top1_score = total_top1 / total_examples
     top5_score = total_top5 / total_examples
     return top5_score
