@@ -183,8 +183,8 @@ SAVER = Saver(N_EXAMPLES, total_classes)
 def evaluate():
     total_top1, total_top5 = 0, 0
     score_dict = dict()
-    for torch_class in VALID_CLASSES:
-        score_dict[torch_class] = np.zeros((2,))
+    for class_name in VALID_CLASSES:
+        score_dict[on2onlabel[class_name]] = np.zeros((2,))
     for batch, labels in test_loader:
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
