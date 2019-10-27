@@ -52,7 +52,6 @@ class Objectnet(Dataset):
 
     def n_per_class(self, num_examples):
         valid_classes = set()
-        import pdb; pdb.set_trace()
         for _, label_list in self.images:
             for label in label_list:
                 valid_classes.add(torch2objectnet[label])
@@ -63,7 +62,7 @@ class Objectnet(Dataset):
         remaining_images = []
         for path, label_list in self.images:
             objectnet_label = torch2objectnet[label_list[0]]
-            if quotas[objectnet_label] < 0:
+            if quotas[objectnet_label] > 0:
                 quotas[objectnet_label] -= 1
                 remaining_images.append((path, objectnet_label))
         self.images = remaining_images
