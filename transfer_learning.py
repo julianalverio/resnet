@@ -20,14 +20,9 @@ transformations = transforms.Compose([
         normalize,
     ])
 
-import pdb; pdb.set_trace()
-with open('/storage/jalverio/resnet/mapping') as f:
-    big_mapping = eval(f.read())
-objectnet2torch = dict()
-for map in big_mapping:
-    objectnet2torch[map['name']] = map['pytorch_ImageNet_category_ids']
-with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'wb') as f:
-    pickle.dump(objectnet2torch, f)
+with open('/storage/jalverio/objectnet2torch.pkl', 'rb') as f:
+    objectnet2torch = pickle.load(f)
+
 import pdb; pdb.set_trace()
 
 class Objectnet(Dataset):
