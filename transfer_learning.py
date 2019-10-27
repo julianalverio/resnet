@@ -9,6 +9,7 @@ import torch.nn as nn
 import time
 import json
 import pickle
+from torch.optim import adam
 
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -103,7 +104,8 @@ quotas = dict()
 for class_int in all_classes:
     quotas[class_int] = 0
 
-
+optimizer = adam(model, lr=3e-4)
+all_batches = []
 for batch_counter, (batch, labels) in enumerate(val_loader):
     valid_idxs = []
     labels = labels[0]
@@ -113,15 +115,16 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
             quotas[label.item()] += 1
         labels = labels[valid_idxs]
         batch = batch[valid_idxs]
-    if not batch:
-        continue
-    logits = model(batch)
-    top1, top5 = accuracy_objectnet(logits, labels)
-    total_top1 += top1
-    total_top5 += top5
-    total_examples += batch.shape[0]
-    fraction_done = round(batch_counter / len(val_loader), 3)
-    print('%s done' % fraction_done)
+    if batch:
+        all_batches.append(batch)
+import pdb; pdb.set_trace()
+    # logits = model(batch)
+    # top1, top5 = accuracy_objectnet(logits, labels)
+    # total_top1 += top1
+    # total_top5 += top5
+    # total_examples += batch.shape[0]
+    # fraction_done = round(batch_counter / len(val_loader), 3)
+    # print('%s done' % fraction_done)
 
 print('total examples', total_examples)
 print('top5 score', total_top5 / total_examples)
