@@ -248,7 +248,7 @@ try:
         SAVER.write_to_disk()
 except:
     pass
-
+import pdb; pdb.set_trace()
 SAVER.write_to_disk()
 print('BEST top5', top_score)
 
