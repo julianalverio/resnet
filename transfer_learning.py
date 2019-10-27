@@ -47,7 +47,7 @@ class Objectnet(Dataset):
         for dirname in os.listdir(root):
             class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
             if class_name not in objectnet2torch:
-                print(class_name)
+                print(class_name, end=',')
                 continue
             classes_in_dataset.add(class_name)
             labels = objectnet2torch[class_name]
