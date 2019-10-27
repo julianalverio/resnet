@@ -61,10 +61,31 @@ class Objectnet(Dataset):
                 path = os.path.join(root, dirname, image_name)
                 self.images.append((path, label))
 
+        if num_examples == 64:
+            self.remove_small_classes()
+
         print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
         self.n_per_class(num_examples, test)
 
         self.classes_in_dataset = classes_in_dataset
+
+    def remove_small_classes(self):
+        counter_dict = dict()
+        for _, label in self.images:
+            if label not in counter_dict:
+                counter_dict[label] = 1
+            else:
+                counter_dict[label] += 1
+        to_remove = []
+        for label, frequency in counter_dict.items():
+            if frequency < 128:
+                to_remove.append(label)
+        to_remove = set(to_remove)
+        new_images = []
+        for path, label in self.images:
+            if label not in to_remove:
+                new_images.append((path, label))
+        self.images = new_images
 
     def n_per_class(self, num_examples, test):
         valid_classes = set()
