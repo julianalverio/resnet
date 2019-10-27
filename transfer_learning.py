@@ -166,7 +166,7 @@ model = nn.DataParallel(model)
 N_EXAMPLES = args.n
 
 
-image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
+image_dir = '/storage/jalverio/objectnet-oct-24-d123/'
 dataset = Objectnet(image_dir, transformations, objectnet2torch)
 dataset.n_per_class(N_EXAMPLES)
 dataset_test = Objectnet2(image_dir, transformations, objectnet2torch)
