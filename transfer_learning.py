@@ -51,21 +51,22 @@ class Objectnet(Dataset):
         self.images = []
         classes_in_dataset = set()
         for dirname in os.listdir(root):
-            import pdb; pdb.set_trace()
             if overlap:
                 class_name = dirname_to_classname[dirname]
                 if class_name not in objectnet2torch:
                     continue
             classes_in_dataset.add(dirname)
-            labels = on2onlabel[dirname]
+            label = on2onlabel[dirname]
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
                 path = os.path.join(root, dirname, image_name)
-                self.images.append((path, labels))
+                self.images.append((path, label))
         print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
         self.n_per_class(num_examples, test)
 
         self.classes_in_dataset = classes_in_dataset
+
+        import pdb; pdb.set_trace()
 
     def n_per_class(self, num_examples, test):
         import pdb; pdb.set_trace()
