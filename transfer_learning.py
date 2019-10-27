@@ -44,6 +44,7 @@ class Objectnet(Dataset):
         for dirname in os.listdir(root):
             class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
             if class_name not in objectnet2torch:
+                print('%s not in mapping' % class_name)
                 continue
             classes_in_dataset.add(class_name)
             labels = objectnet2torch[class_name]
