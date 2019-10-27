@@ -100,7 +100,7 @@ def accuracy_objectnet(output, target):
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 WORKERS = 1
-BATCH_SIZE = 1
+BATCH_SIZE = 32
 
 model = torchvision.models.resnet152(pretrained=True).eval()
 for param in model.parameters():
