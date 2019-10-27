@@ -29,7 +29,6 @@ for label_list in objectnet2torch.values():
     all_classes.extend(label_list)
 all_classes = set(all_classes)
 
-import pdb; pdb.set_trace()
 with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
 
@@ -41,7 +40,8 @@ class Objectnet(Dataset):
         self.images = []
         classes_in_dataset = set()
         for dirname in os.listdir(root):
-            class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
+            # class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
+            class_name = dirname_to_classname[dirname]
             if class_name not in objectnet2torch:
                 continue
             classes_in_dataset.add(class_name)
