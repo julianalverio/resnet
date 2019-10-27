@@ -117,7 +117,8 @@ def accuracy_objectnet(output, target):
 
 def accuracy_objectnet_nobatch(output, target):
     _, pred = output.topk(5, 1, True, True)
-    pred_set = set(np.squeeze(pred.cpu().numpy()).tolist())
+    pred_list = np.squeeze(pred.cpu().numpy()).tolist()
+    pred_set = pred_list
     # top 1 succeeded
     if output[0].item() == target.item():
         return np.ones((2,))
