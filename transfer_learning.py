@@ -43,7 +43,6 @@ with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
 
 
-
 class Objectnet(Dataset):
     def __init__(self, root, transform, objectnet2torch, num_examples, test, overlap):
         self.root = root
@@ -61,6 +60,7 @@ class Objectnet(Dataset):
             for image_name in images:
                 path = os.path.join(root, dirname, image_name)
                 self.images.append((path, label))
+        import pdb; pdb.set_trace()
         print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
         self.n_per_class(num_examples, test)
 
