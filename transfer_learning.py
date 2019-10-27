@@ -202,7 +202,7 @@ class Saver(object):
         self.training_top5.append(top5)
 
     def write_to_disk(self):
-        name = '%s_examples_%s_classes_%s_epochs' % (self.n_examples, self.num_classes, len(self.records))
+        name = '%s_examples_%s_classes_%s_epochs' % (self.n_examples, self.num_classes, len(self.evaluation_top5))
         with open('/storage/jalverio/resnet/runs/' + name, 'wb') as f:
             pickle.dump([self.training_top1, self.training_top5, self.evaluation_top1, self.evaluation_top5], f)
         print('The saver has saved!')
