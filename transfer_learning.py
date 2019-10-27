@@ -134,9 +134,16 @@ model.fc = nn.Linear(2048, 1000, bias=True)
 
 NUM_EXAMPLES = 1
 
+# Let's build objectnet2torch! :D
+object2torch = dict()
+for k, v in objectnet2imagenet:
+    torch_labels = []
+    for label in v:
+        torch_labels.append(imagenet2torch[label])
+    object2torch[k] = torch_labels
+
 
 all_classes = set()
-import pdb; pdb.set_trace()
 for label in imagenet2torch.values():
     all_classes.add(label)
 
