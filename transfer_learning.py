@@ -188,6 +188,7 @@ def evaluate():
         total_examples += batch.shape[0]
     top1_score = total_top1 / total_examples
     top5_score = total_top5 / total_examples
+    print(total_examples)
     return top1_score, top5_score
 
 
@@ -196,6 +197,7 @@ optimizer = Adam(model.parameters(), lr=0.0001)
 previous_accuracy = 0.
 total_top1, total_top5, total_examples = 0, 0, 0
 for epoch in range(50):
+    total_examples = 0
     print('starting epoch %s' % epoch)
     for batch_counter, (batch, labels) in enumerate(val_loader):
         labels = labels[0].to(DEVICE)
@@ -205,6 +207,7 @@ for epoch in range(50):
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        total_examples += batch.shape[0]
 
     top1_score, current_accuracy = evaluate()
     print('top1 score: %s' % top1_score)
