@@ -51,10 +51,10 @@ class Objectnet(Dataset):
         print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
 
     def n_per_class(self, num_examples):
-        valid_classes = list()
+        valid_classes = set()
+        import pdb; pdb.set_trace()
         for _, label in self.images:
-            valid_classes.extend(torch2objectnet[label])
-        valid_classes = set(valid_classes)
+            valid_classes.add(torch2objectnet[label])
 
         quotas = dict()
         for label in valid_classes:
