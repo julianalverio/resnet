@@ -29,6 +29,9 @@ for label_list in objectnet2torch.values():
     all_classes.extend(label_list)
 all_classes = set(all_classes)
 
+with open('/storage/jalverio/resnet/')
+dirname_to_classname =
+
 
 class Objectnet(Dataset):
     def __init__(self, root, transform, objectnet2torch):
