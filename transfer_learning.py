@@ -134,6 +134,14 @@ model.fc = nn.Linear(2048, 1000, bias=True)
 
 NUM_EXAMPLES = 1
 
+
+unique_imagenet_ids = []
+for thing in objectnet2imagenet.values():
+    unique_imagenet_ids.extend(thing)
+unique_imagenet_ids = set(unique_imagenet_ids)
+import pdb; pdb.set_trace()
+
+
 # Let's build objectnet2torch! :D
 object2torch = dict()
 for k, v in objectnet2imagenet.items():
