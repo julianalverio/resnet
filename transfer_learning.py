@@ -158,7 +158,7 @@ model.fc = nn.Linear(2048, 1000, bias=True)
 model = model.eval().to(DEVICE)
 # model = nn.DataParallel(model)
 
-N_EXAMPLES = 1
+N_EXAMPLES = 2
 
 
 image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
