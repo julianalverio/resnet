@@ -255,7 +255,7 @@ for epoch in range(50):
         total_examples += batch.shape[0]
 
     training_top1_performance = total_training_top1 / total_examples
-    training_top5_performance = total_training_top1 / total_examples
+    training_top5_performance = total_training_top5 / total_examples
     print('training top1 score: %s' % training_top1_performance)
     print('training top5 score: %s' % training_top5_performance)
     top1_score, top5_score = evaluate()
