@@ -156,7 +156,7 @@ for param in model.parameters():
     param.requires_grad = False
 model.fc = nn.Linear(2048, 1000, bias=True)
 model = model.eval().to(DEVICE)
-model = nn.DataParallel(model)
+# model = nn.DataParallel(model)
 
 N_EXAMPLES = args.n
 OVERLAP = args.overlap
@@ -216,6 +216,7 @@ try:
             labels = labels.to(DEVICE)
             batch = batch.to(DEVICE)
             logits = model(batch)
+            # training accuracy per class not needed
             loss = criterion(logits, labels)
             optimizer.zero_grad()
             loss.backward()
