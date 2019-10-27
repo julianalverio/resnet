@@ -189,7 +189,8 @@ def evaluate():
     for batch, labels in test_loader:
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
-        logits = model(batch)
+        with torch.no_grad():
+            logits = model(batch)
         accuracy_results = accuracy_objectnet_nobatch(logits, labels)
         score_dict[labels[0].item()] += accuracy_results
         total_top1 += accuracy_results[0]
@@ -213,7 +214,8 @@ for epoch in range(50):
     for batch_counter, (batch, labels) in enumerate(val_loader):
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
-        logits = model(batch)
+        with torch.no_grad():
+            logits = model(batch)
         loss = criterion(logits, labels)
         optimizer.zero_grad()
         loss.backward()
