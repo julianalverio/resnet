@@ -11,6 +11,7 @@ import json
 import pickle
 from torch.optim import Adam
 import argparse
+import copy
 import numpy as np
 
 parser = argparse.ArgumentParser()
@@ -44,7 +45,7 @@ with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
 
 
 class Objectnet(Dataset):
-    def __init__(self, root, transform, objectnet2torch, num_examples, test, overlap):
+    def __init__(self, root, transform, objectnet2torch, num_examples, test, overlap, test_images=None):
         self.root = root
         self.transform = transform
         self.images = []
@@ -69,6 +70,9 @@ class Objectnet(Dataset):
 
         self.classes_in_dataset = classes_in_dataset
 
+        if test_images:
+            self.images = test_images
+
     def remove_small_classes(self):
         counter_dict = dict()
         for _, label in self.images:
@@ -78,7 +82,7 @@ class Objectnet(Dataset):
                 counter_dict[label] += 1
         to_remove = []
         for label, frequency in counter_dict.items():
-            if frequency < 128:
+            if frequency < 64:
                 to_remove.append(label)
         to_remove = set(to_remove)
         new_images = []
@@ -94,18 +98,24 @@ class Objectnet(Dataset):
         quotas = dict()
         for label in valid_classes:
             quotas[label] = 0
+        test_images = []
         remaining_images = []
         for path, objectnet_label in self.images:
             if not test:
                 if quotas[objectnet_label] < num_examples:
                     quotas[objectnet_label] += 1
                     remaining_images.append((path, objectnet_label))
+                else:
+                    test_images.append((path, objectnet_label))
             else:
                 if quotas[objectnet_label] < num_examples * 2:
                     if quotas[objectnet_label] >= num_examples:
                         remaining_images.append((path, objectnet_label))
                     quotas[objectnet_label] += 1
+                else:
+                    test_images.append((path, objectnet_label))
         self.images = remaining_images
+        self.test_images = test_images
         print('Removed some examples. %s classes and %s examples remaining.' % (len(valid_classes), len(self.images)))
 
     def __getitem__(self, index):
@@ -182,8 +192,7 @@ class Saver(object):
         self.evaluation_top1 = []
         self.evaluation_top5 = []
 
-    def write_evaluation_record(self, results):
-        top1, top5 = results
+    def write_evaluation_record(self, top1, top5):
         self.evaluation_top1.append(top1)
         self.evaluation_top5.append(top5)
 
@@ -220,7 +229,9 @@ image_dir = '/storage/jalverio/objectnet-oct-24-d123/'
 dataset = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, test=False, overlap=OVERLAP)
 total_classes = len(dataset.classes_in_dataset)
 VALID_CLASSES = dataset.classes_in_dataset
-dataset_test = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, test=True, overlap=OVERLAP)
+dataset_test = copy.deepcopy(dataset)
+dataset_test.images = dataset.test_images
+# dataset_test = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, test=True, overlap=OVERLAP)
 val_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=BATCH_SIZE, shuffle=False,
@@ -245,14 +256,15 @@ def evaluate():
         batch = batch.to(DEVICE)
         with torch.no_grad():
             logits = model(batch)
-        accuracy_results = accuracy_objectnet_nobatch(logits, labels)
-        score_dict[labels.item()] += accuracy_results
-        total_top1 += accuracy_results[0]
-        total_top5 += accuracy_results[1]
+        # accuracy_results = accuracy_objectnet_nobatch(logits, labels)
+        top1, top5 = accuracy_objectnet(logits, labels)
+        # score_dict[labels.item()] += accuracy_results
+        total_top1 += top1
+        total_top5 += top5
     total_examples = len(test_loader)
     top1_score = total_top1 / total_examples
     top5_score = total_top5 / total_examples
-    SAVER.write_record(score_dict)
+    SAVER.write_evaluation_record(top1_score, top5_score)
     return top1_score, top5_score
 
 
