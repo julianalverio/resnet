@@ -29,8 +29,9 @@ for label_list in objectnet2torch.values():
     all_classes.extend(label_list)
 all_classes = set(all_classes)
 
-with open('/storage/jalverio/resnet/')
-dirname_to_classname =
+import pdb; pdb.set_trace()
+with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
+    dirname_to_classname = json.load(f)
 
 
 class Objectnet(Dataset):
