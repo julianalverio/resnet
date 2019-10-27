@@ -49,10 +49,7 @@ class Objectnet(Dataset):
     def n_per_class(self, num_examples):
         valid_classes = list()
         for _, label in self.images:
-            try:
-                valid_classes.extend(label)
-            except:
-                import pdb; pdb.set_trace()
+            valid_classes.extend(label)
         valid_classes = set(valid_classes)
 
         quotas = dict()
@@ -60,6 +57,8 @@ class Objectnet(Dataset):
             quotas[label] = num_examples
         remaining_images = []
         for path, label in self.images:
+            if type(label) == list:
+                import pdb; pdb.set_trace()
             if label in valid_classes:
                 if quotas[label] < 0:
                     quotas[label] -= 1
