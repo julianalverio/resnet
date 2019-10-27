@@ -47,9 +47,10 @@ class Objectnet(Dataset):
         print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
 
     def n_per_class(self, num_examples):
-        valid_classes = set()
+        valid_classes = list()
         for label in self.images:
-            valid_classes.add(label)
+            valid_classes.extend(label)
+        valid_classes = set(valid_classes)
 
         quotas = dict()
         for label in valid_classes:
