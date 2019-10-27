@@ -55,6 +55,9 @@ class Objectnet(Dataset):
         image = self.transform(image)
         return image, labels
 
+    def __len__(self):
+        return len(self.images)
+
 
 def accuracy_objectnet(output, target):
     with torch.no_grad():
