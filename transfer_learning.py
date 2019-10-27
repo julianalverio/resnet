@@ -215,11 +215,11 @@ for epoch in range(50):
         top_score = current_accuracy
     print('top1 score: %s' % top1_score)
     print('top5 score: %s' % current_accuracy)
-    diff = abs(previous_accuracy) - abs(current_accuracy)
-    if diff < 0.005 and epoch >= 20:
-        print('breaking out')
-        break
-    previous_loss = loss
+    # diff = abs(previous_accuracy) - abs(current_accuracy)
+    # if diff < 0.005 and epoch >= 20:
+    #     print('breaking out')
+    #     break
+    # previous_loss = loss
 
-print('BEST top5', )
+print('BEST top5', top_score)
 
