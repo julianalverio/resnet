@@ -27,6 +27,11 @@ transformations = transforms.Compose([
         normalize,
     ])
 
+on2onlabel = dict()
+for idx, name in enumerate(os.listdir('/storage/jalverio/objectnet-oct-24-d123')):
+    on2onlabel[name] = idx
+onlabel2name = {v: k for k, v in on2onlabel.items()}
+
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
 torch2objectnet = dict()
@@ -45,13 +50,13 @@ class Objectnet(Dataset):
         self.images = []
         classes_in_dataset = set()
         for dirname in os.listdir(root):
-            class_name = dirname_to_classname[dirname]
             import pdb; pdb.set_trace()
             if overlap:
+                class_name = dirname_to_classname[dirname]
                 if class_name not in objectnet2torch:
                     continue
-            classes_in_dataset.add(class_name)
-            labels = objectnet2torch[class_name]
+            classes_in_dataset.add(dirname)
+            labels = on2onlabel[dirname]
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
                 path = os.path.join(root, dirname, image_name)
@@ -62,17 +67,19 @@ class Objectnet(Dataset):
         self.classes_in_dataset = classes_in_dataset
 
     def n_per_class(self, num_examples, test):
+        import pdb; pdb.set_trace()
         valid_classes = set()
         for _, label_list in self.images:
             for label in label_list:
-                valid_classes.add(torch2objectnet[label])
+                valid_classes.add(label)
 
         quotas = dict()
         for label in valid_classes:
             quotas[label] = 0
         remaining_images = []
+        import pdb; pdb.set_trace()
         for path, label_list in self.images:
-            objectnet_label = torch2objectnet[label_list[0]]
+            objectnet_label = label_list
             if not test:
                 if quotas[objectnet_label] < num_examples:
                     quotas[objectnet_label] += 1
