@@ -22,6 +22,7 @@ transformations = transforms.Compose([
 
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
+torch2objectnet = {v:k for k,v in objectnet2torch}
 
 with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
@@ -49,20 +50,18 @@ class Objectnet(Dataset):
     def n_per_class(self, num_examples):
         valid_classes = list()
         for _, label in self.images:
-            valid_classes.extend(label)
+            valid_classes.extend(torch2objectnet[label])
         valid_classes = set(valid_classes)
 
         quotas = dict()
         for label in valid_classes:
             quotas[label] = num_examples
         remaining_images = []
-        for path, label in self.images:
-            if type(label) == list:
-                import pdb; pdb.set_trace()
-            if label in valid_classes:
-                if quotas[label] < 0:
-                    quotas[label] -= 1
-                    remaining_images.append((path, label))
+        for path, label_list in self.images:
+            objectnet_label = torch2objectnet[label_list[0]]
+            if quotas[objectnet_label] < 0:
+                quotas[objectnet_label] -= 1
+                remaining_images.append((path, objectnet_label))
         self.images = remaining_images
         print('Purged some examples. %s classes and %s examples remaining.' % (len(valid_classes), len(self.images)))
 
