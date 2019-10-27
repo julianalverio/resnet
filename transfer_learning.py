@@ -11,7 +11,6 @@ import json
 import pickle
 from torch.optim import Adam
 
-
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
 transformations = transforms.Compose([
@@ -23,11 +22,6 @@ transformations = transforms.Compose([
 
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
-
-all_classes = list()
-for label_list in objectnet2torch.values():
-    all_classes.extend(label_list)
-all_classes = set(all_classes)
 
 with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
@@ -51,8 +45,23 @@ class Objectnet(Dataset):
                 path = os.path.join(root, dirname, image_name)
                 self.images.append((path, labels))
         print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
-        import pdb; pdb.set_trace()
 
+    def n_per_class(self, num_examples):
+        valid_classes = set()
+        for label in self.images:
+            valid_classes.add(label)
+
+        quotas = dict()
+        for label in valid_classes:
+            quotas[label] = num_examples
+        remaining_images = []
+        for path, label in self.images:
+            if label in valid_classes:
+                if quotas[label] < 0:
+                    quotas[label] -= 1
+                    remaining_images.append((path, label))
+        self.images = remaining_images
+        print('Purged some examples. %s classes and %s examples remaining.' % (len(valid_classes), len(self.images)))
 
     def __getitem__(self, index):
         full_path, labels = self.images[index]
@@ -74,10 +83,7 @@ def accuracy_objectnet(output, target):
 
     for idx, prediction in enumerate(pred):
         pred_set = set(prediction.cpu().numpy().tolist())
-        try:
-            target_set = set([target[idx].cpu().numpy().tolist()])
-        except:
-            import pdb; pdb.set_trace()
+        target_set = set([target[idx].cpu().numpy().tolist()])
         if pred_set.intersection(target_set):
             top5_correct += 1
 
@@ -91,54 +97,60 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 WORKERS = 1
 BATCH_SIZE = 1
 
-model = torchvision.models.resnet152(pretrained=True)
+model = torchvision.models.resnet152(pretrained=True).eval()
 for param in model.parameters():
     param.requires_grad = False
 model.fc = nn.Linear(2048, 1000, bias=True)
 # model = model.eval().to(DEVICE)
 # model = nn.DataParallel(model)
 
+N_EXAMPLES = 1
+
 
 image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
 dataset = Objectnet(image_dir, transformations, objectnet2torch)
+dataset.n_per_class(N_EXAMPLES)
 val_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=BATCH_SIZE, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
 
-N_EXAMPLES = 1
+def evaluate():
+    total_top1, total_top5, total_examples = 0, 0, 0
+    for batch, labels in enumerate(val_loader):
+        labels = labels[0].to(DEVICE)
+        batch = batch.to(DEVICE)
+        logits = model(batch)
+        top1, top5 = accuracy_objectnet(logits, labels)
+        total_top1 += top1
+        total_top5 += top5
+        total_examples += batch.shape[0]
+    top1_score = total_top1 / total_examples
+    top5_score = total_top5 / total_examples
+    return top5_score
 
-total_top1, total_top5, total_examples = 0, 0, 0
-quotas = dict()
-for class_int in all_classes:
-    quotas[class_int] = 0
 
+
+criterion = nn.CrossEntropyLoss().to(DEVICE)
 optimizer = Adam(model.parameters(), lr=0.0003)
-all_batches = []
-import pdb; pdb.set_trace()
-for batch, labels in val_loader:
-    pass
-for batch_counter, (batch, labels) in enumerate(val_loader):
-    valid_idxs = []
-    labels = labels[0]
-    for idx, label in enumerate(labels):
-        if quotas[label.item()] < N_EXAMPLES:
-            valid_idxs.append(idx)
-            quotas[label.item()] += 1
-        labels = labels[valid_idxs]
-        batch = batch[valid_idxs]
-    if batch:
-        all_batches.append(batch)
-import pdb; pdb.set_trace()
-    # logits = model(batch)
-    # top1, top5 = accuracy_objectnet(logits, labels)
-    # total_top1 += top1
-    # total_top5 += top5
-    # total_examples += batch.shape[0]
-    # fraction_done = round(batch_counter / len(val_loader), 3)
-    # print('%s done' % fraction_done)
+previous_accuracy = 0.
+total_top1, total_top5, total_examples = 0, 0, 0
+for epoch in range(50):
+    print('starting epoch %s' % epoch)
+    for batch_counter, (batch, labels) in enumerate(val_loader):
+        labels = labels[0].to(DEVICE)
+        batch = batch.to(DEVICE)
+        logits = model(batch)
+        loss = criterion(logits, labels)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
-print('total examples', total_examples)
-print('top5 score', total_top5 / total_examples)
-print('top1 score', total_top1 / total_examples)
+        current_accuracy = evaluate()
+        print('top5 score: %s' % current_accuracy)
+        diff = abs(previous_accuracy) - abs(current_accuracy)
+        if diff < 0.05 and epoch >= 10:
+            print('breaking out')
+            break
+        previous_loss = loss
 
