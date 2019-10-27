@@ -35,6 +35,9 @@ for label_list in objectnet2torch.values():
 all_classes = set(all_classes)
 
 
+import pdb; pdb.set_trace()
+print(objectnet2torch.keys())
+
 class Objectnet(Dataset):
     def __init__(self, root, transform, objectnet2torch):
         self.root = root
