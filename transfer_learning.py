@@ -311,20 +311,20 @@ total_top1 = 0
 total_top5 = 0
 total_examples = 0
 model = torch.load('/tmp/julian_model').eval().to(DEVICE)
-for batch, labels in test_loader:
-    labels = labels.to(DEVICE)
-    batch = batch.to(DEVICE)
-    with torch.no_grad():
+with torch.no_grad():
+    for batch, labels in test_loader:
+        labels = labels.to(DEVICE)
+        batch = batch.to(DEVICE)
         logits = model(batch)
-    top1, top5 = accuracy_objectnet(logits, labels)
-    total_top1 += top1
-    total_top5 += top5
-    total_examples += batch.shape[0]
-top1_score = total_top1 / total_examples
-top5_score = total_top5 / total_examples
-print('top1 score', top1_score)
-print('top5 score', top5_score)
-import pdb; pdb.set_trace()
+        top1, top5 = accuracy_objectnet(logits, labels)
+        total_top1 += top1
+        total_top5 += top5
+        total_examples += batch.shape[0]
+    top1_score = total_top1 / total_examples
+    top5_score = total_top5 / total_examples
+    print('top1 score', top1_score)
+    print('top5 score', top5_score)
+    import pdb; pdb.set_trace()
 ## END OF THAT BLOCK
 
 
