@@ -158,7 +158,7 @@ model.fc = nn.Linear(2048, 1000, bias=True)
 model = model.eval().to(DEVICE)
 model = nn.DataParallel(model)
 
-N_EXAMPLES = 2
+N_EXAMPLES = 1
 
 
 image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
@@ -213,7 +213,7 @@ for epoch in range(50):
     print('top1 score: %s' % top1_score)
     print('top5 score: %s' % current_accuracy)
     diff = abs(previous_accuracy) - abs(current_accuracy)
-    if diff < 0.005 and epoch >= 15:
+    if diff < 0.005 and epoch >= 20:
         print('breaking out')
         break
     previous_loss = loss
