@@ -112,9 +112,9 @@ class Objectnet2(Dataset):
         for path, label_list in self.images:
             objectnet_label = torch2objectnet[label_list[0]]
             if quotas[objectnet_label] < num_examples * 2:
-                quotas[objectnet_label] += 1
                 if quotas[objectnet_label] >= num_examples:
                     remaining_images.append((path, label_list))
+                quotas[objectnet_label] += 1
         self.images = remaining_images
         print('Purged some examples. %s classes and %s examples remaining.' % (len(valid_classes), len(self.images)))
 
