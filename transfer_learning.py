@@ -187,7 +187,8 @@ def evaluate():
     for class_name in VALID_CLASSES:
         score_dict[on2onlabel[class_name]] = np.zeros((2,))
     for batch, labels in test_loader:
-        labels = labels[0].to(DEVICE)
+        import pdb; pdb.set_trace()
+        labels = labels.to(DEVICE)
         batch = batch.to(DEVICE)
         with torch.no_grad():
             logits = model(batch)
