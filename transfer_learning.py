@@ -66,8 +66,6 @@ class Objectnet(Dataset):
 
         self.classes_in_dataset = classes_in_dataset
 
-        import pdb; pdb.set_trace()
-
     def n_per_class(self, num_examples, test):
         import pdb; pdb.set_trace()
         valid_classes = set()
