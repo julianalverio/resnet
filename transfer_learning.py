@@ -79,6 +79,56 @@ class Objectnet(Dataset):
         return len(self.images)
 
 
+## THIS IS FOR THE TEST SET
+class Objectnet2(Dataset):
+    def __init__(self, root, transform, objectnet2torch):
+        self.root = root
+        self.transform = transform
+        self.images = []
+        classes_in_dataset = set()
+        for dirname in os.listdir(root):
+            class_name = dirname_to_classname[dirname]
+            if class_name not in objectnet2torch:
+                continue
+            classes_in_dataset.add(class_name)
+            labels = objectnet2torch[class_name]
+            images = os.listdir(os.path.join(root, dirname))
+            for image_name in images:
+                path = os.path.join(root, dirname, image_name)
+                self.images.append((path, labels))
+        print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
+
+    def n_per_class(self, num_examples):
+        valid_classes = set()
+        for _, label_list in self.images:
+            for label in label_list:
+                valid_classes.add(torch2objectnet[label])
+
+        quotas = dict()
+        for label in valid_classes:
+            quotas[label] = num_examples
+        remaining_images = []
+        for path, label_list in self.images:
+            objectnet_label = torch2objectnet[label_list[0]]
+            if quotas[objectnet_label] > 0:
+                quotas[objectnet_label] -= 1
+            if 0 >= quotas[objectnet_label] > -num_examples:
+                quotas[objectnet_label] -= 1
+                remaining_images.append((path, label_list))
+        self.images = remaining_images
+        print('Purged some examples. %s classes and %s examples remaining.' % (len(valid_classes), len(self.images)))
+
+    def __getitem__(self, index):
+        full_path, labels = self.images[index]
+        image = Image.open(full_path)
+        image = image.convert('RGB')
+        image = self.transform(image)
+        return image, labels
+
+    def __len__(self):
+        return len(self.images)
+
+
 def accuracy_objectnet(output, target):
     with torch.no_grad():
         # pred is n x 5
@@ -115,6 +165,8 @@ N_EXAMPLES = 1
 image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
 dataset = Objectnet(image_dir, transformations, objectnet2torch)
 dataset.n_per_class(N_EXAMPLES)
+dataset_test = Objectnet2(image_dir, transformations, objectnet2torch)
+dataset_test.n_per_class(N_EXAMPLES)
 val_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=BATCH_SIZE, shuffle=False,
