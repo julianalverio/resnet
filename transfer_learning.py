@@ -108,7 +108,6 @@ class Objectnet2(Dataset):
         for label in valid_classes:
             quotas[label] = 0
         remaining_images = []
-        import pdb; pdb.set_trace()
         for path, label_list in self.images:
             objectnet_label = torch2objectnet[label_list[0]]
             if quotas[objectnet_label] < num_examples * 2:
@@ -180,9 +179,6 @@ test_loader = torch.utils.data.DataLoader(
 def evaluate():
     total_top1, total_top5, total_examples = 0, 0, 0
     for batch_counter, (batch, labels) in enumerate(test_loader):
-        import pdb; pdb.set_trace()
-        if batch_counter == 0:
-            print(labels)
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
         logits = model(batch)
