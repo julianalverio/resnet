@@ -189,7 +189,7 @@ def evaluate():
         total_examples += batch.shape[0]
     top1_score = total_top1 / total_examples
     top5_score = total_top5 / total_examples
-    return top5_score
+    return top1_score, top5_score
 
 
 
@@ -208,7 +208,8 @@ for epoch in range(50):
         loss.backward()
         optimizer.step()
 
-    current_accuracy = evaluate()
+    top1_score, current_accuracy = evaluate()
+    print('top1 score: %s' % top1_score)
     print('top5 score: %s' % current_accuracy)
     diff = abs(previous_accuracy) - abs(current_accuracy)
     if diff < 0.05 and epoch >= 10:
