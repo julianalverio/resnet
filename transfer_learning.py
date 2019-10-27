@@ -195,6 +195,7 @@ def evaluate():
 criterion = nn.CrossEntropyLoss().to(DEVICE)
 optimizer = Adam(model.parameters(), lr=0.0001)
 previous_accuracy = 0.
+top_score = 0.
 total_top1, total_top5, total_examples = 0, 0, 0
 for epoch in range(50):
     total_examples = 0
@@ -210,6 +211,8 @@ for epoch in range(50):
         total_examples += batch.shape[0]
 
     top1_score, current_accuracy = evaluate()
+    if current_accuracy > top_score:
+        top_score = current_accuracy
     print('top1 score: %s' % top1_score)
     print('top5 score: %s' % current_accuracy)
     diff = abs(previous_accuracy) - abs(current_accuracy)
@@ -217,4 +220,6 @@ for epoch in range(50):
         print('breaking out')
         break
     previous_loss = loss
+
+print('BEST top5', )
 
