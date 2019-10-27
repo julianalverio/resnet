@@ -22,6 +22,7 @@ transformations = transforms.Compose([
 
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
+import pdb; pdb.set_trace()
 torch2objectnet = {v:k for k,v in objectnet2torch}
 
 with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
