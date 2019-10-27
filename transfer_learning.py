@@ -172,10 +172,14 @@ val_loader = torch.utils.data.DataLoader(
         batch_size=BATCH_SIZE, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
 
+test_loader = torch.utils.data.DataLoader(
+        dataset_test,
+        batch_size=BATCH_SIZE, shuffle=False,
+        num_workers=WORKERS, pin_memory=True)
+
 def evaluate():
     total_top1, total_top5, total_examples = 0, 0, 0
-    import pdb; pdb.set_trace()
-    for batch, labels in val_loader:
+    for batch, labels in test_loader:
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
         logits = model(batch)
