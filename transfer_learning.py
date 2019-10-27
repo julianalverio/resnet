@@ -226,6 +226,7 @@ try:
             batch = batch.to(DEVICE)
             logits = model(batch)
             # training accuracy per class not needed
+            import pdb; pdb.set_trace()
             top1, top5 = accuracy_objectnet(logits, labels)
             total_training_top1 += top1
             total_training_top5 += top5
