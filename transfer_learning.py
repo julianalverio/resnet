@@ -28,6 +28,7 @@ for map in big_mapping:
     objectnet2torch[map['name']] = map['pytorch_ImageNet_category_ids']
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'wb') as f:
     pickle.dump(objectnet2torch, f)
+import pdb; pdb.set_trace()
 
 class Objectnet(Dataset):
     """Dataset wrapping images and target labels for Kaggle - Planet Amazon from Space competition.
