@@ -179,7 +179,9 @@ test_loader = torch.utils.data.DataLoader(
 
 def evaluate():
     total_top1, total_top5, total_examples = 0, 0, 0
-    for batch, labels in test_loader:
+    for batch_counter, (batch, labels) in enumerate(test_loader):
+        if batch_counter == 0:
+            print(labels)
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
         logits = model(batch)
@@ -192,14 +194,15 @@ def evaluate():
     return top1_score, top5_score
 
 
-
 criterion = nn.CrossEntropyLoss().to(DEVICE)
-optimizer = Adam(model.parameters(), lr=0.0003)
+optimizer = Adam(model.parameters(), lr=0.0001)
 previous_accuracy = 0.
 total_top1, total_top5, total_examples = 0, 0, 0
 for epoch in range(50):
     print('starting epoch %s' % epoch)
     for batch_counter, (batch, labels) in enumerate(val_loader):
+        if batch_counter == 0:
+            print(labels)
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
         logits = model(batch)
