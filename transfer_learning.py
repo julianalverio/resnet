@@ -10,6 +10,11 @@ import time
 import json
 import pickle
 from torch.optim import Adam
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--num_examples', type=int)
+args = parser.parse_args()
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
@@ -158,7 +163,7 @@ model.fc = nn.Linear(2048, 1000, bias=True)
 model = model.eval().to(DEVICE)
 model = nn.DataParallel(model)
 
-N_EXAMPLES = 1
+N_EXAMPLES = args.num_examples
 
 
 image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
