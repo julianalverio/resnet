@@ -154,11 +154,11 @@ for epoch in range(50):
         loss.backward()
         optimizer.step()
 
-        current_accuracy = evaluate()
-        print('top5 score: %s' % current_accuracy)
-        diff = abs(previous_accuracy) - abs(current_accuracy)
-        if diff < 0.05 and epoch >= 10:
-            print('breaking out')
-            break
-        previous_loss = loss
+    current_accuracy = evaluate()
+    print('top5 score: %s' % current_accuracy)
+    diff = abs(previous_accuracy) - abs(current_accuracy)
+    if diff < 0.05 and epoch >= 10:
+        print('breaking out')
+        break
+    previous_loss = loss
 
