@@ -194,7 +194,7 @@ def evaluate():
             logits = model(batch)
         import pdb; pdb.set_trace()
         accuracy_results = accuracy_objectnet_nobatch(logits, labels)
-        score_dict[labels[0].item()] += accuracy_results
+        score_dict[labels.item()] += accuracy_results
         total_top1 += accuracy_results[0]
         total_top5 += accuracy_results[1]
     total_examples = len(test_loader)
