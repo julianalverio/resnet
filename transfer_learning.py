@@ -108,6 +108,7 @@ class Objectnet2(Dataset):
         for label in valid_classes:
             quotas[label] = 0
         remaining_images = []
+        import pdb; pdb.set_trace()
         for path, label_list in self.images:
             objectnet_label = torch2objectnet[label_list[0]]
             if quotas[objectnet_label] < num_examples * 2:
