@@ -178,6 +178,7 @@ test_loader = torch.utils.data.DataLoader(
 def evaluate():
     total_top1, total_top5, total_examples = 0, 0, 0
     for batch_counter, (batch, labels) in enumerate(test_loader):
+        import pdb; pdb.set_trace()
         if batch_counter == 0:
             print(labels)
         labels = labels[0].to(DEVICE)
