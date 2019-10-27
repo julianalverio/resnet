@@ -164,6 +164,7 @@ OVERLAP = args.overlap
 image_dir = '/storage/jalverio/objectnet-oct-24-d123/'
 dataset = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, test=False, overlap=OVERLAP)
 total_classes = len(dataset.classes_in_dataset)
+VALID_CLASSES = dataset.classes_in_dataset
 dataset_test = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, test=True, overlap=OVERLAP)
 val_loader = torch.utils.data.DataLoader(
         dataset,
@@ -178,18 +179,11 @@ test_loader = torch.utils.data.DataLoader(
 SAVER = Saver(N_EXAMPLES, total_classes)
 
 
-valid_classes = set()
-for _, label_list in dataset.images:
-    for label in label_list:
-        valid_classes.add(torch2objectnet[label])
-TORCH_CLASSES = valid_classes
-
-
 # THIS DOES NOT USE BATCHING TO ALLOW FOR BETTER LOGGING
 def evaluate():
     total_top1, total_top5 = 0, 0
     score_dict = dict()
-    for torch_class in TORCH_CLASSES:
+    for torch_class in VALID_CLASSES:
         score_dict[torch_class] = np.zeros((2,))
     for batch, labels in test_loader:
         labels = labels[0].to(DEVICE)
