@@ -21,43 +21,56 @@ transformations = transforms.Compose([
         normalize,
     ])
 
-with open('/storage/jalverio/resnet/objectnet_to_imagenet_mapping') as f:
-    import pdb; pdb.set_trace()
-    something = f.read()
+with open('/storage/jalverio/resnet/pytorch_to_imagenet_2012_id_correct.json') as f:
+    torch2imagenet = json.load(f)
+    torch2imagenet = {int(k): int(v) for k, v in torch2imagenet.items()}
+    imagenet2torch = {v: k for k, v in torch2imagenet.items()}
 
-with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
-    objectnet2torch = pickle.load(f)
-objectnet2torch_clean = dict()
-for key, value in objectnet2torch.items():
-    clean_key = key.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '').replace('(', '').replace(')', '').replace('__', '_')
-    objectnet2torch_clean[clean_key] = value
-objectnet2torch = objectnet2torch_clean
 
-all_classes = list()
-for label_list in objectnet2torch.values():
-    all_classes.extend(label_list)
-all_classes = set(all_classes)
+# MAKE OBJECTNET2IMAGENET
+with open('/storage/jalverio/resnet/objectnet_to_imagenet_mapping', 'r') as f:
+    evaluated_str = eval(f.read())
+objectnet2imagenet = dict()
+for json_dict in evaluated_str:
+    for k, v in json_dict.items():
+        if k == 'name':
+            name = v
+        if k == 'ImageNet_category_ids':
+            imagenet_ids = v
+    if not imagenet_ids:
+        continue
+    name = name.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
+    objectnet2imagenet[name] = imagenet_ids
 
 
 class Objectnet(Dataset):
-    def __init__(self, root, transform, objectnet2torch):
+    """Dataset wrapping images and target labels for Kaggle - Planet Amazon from Space competition.
+    Arguments:
+        A CSV file path
+        Path to image folder
+        Extension of images
+        PIL transforms
+    """
+
+    def __init__(self, root, transform, objectnet2imagenet, imagenet2torch):
         self.root = root
         self.transform = transform
         self.images = []
-        classes_in_dataset = set()
+        success_counter = 0
         for dirname in os.listdir(root):
             class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
-            if class_name not in objectnet2torch:
-                print(class_name, end=',')
+            if class_name not in objectnet2imagenet:
                 continue
-            classes_in_dataset.add(class_name)
-            labels = objectnet2torch[class_name]
+            success_counter += 1
+            labels = objectnet2imagenet[class_name]
+            new_labels = []
+            for label in labels:
+                new_labels.append(int(imagenet2torch[label - 1]))
+
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
                 path = os.path.join(root, dirname, image_name)
-                self.images.append((path, labels))
-        print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
-        import pdb; pdb.set_trace()
+                self.images.append((path, new_labels))
 
     def __getitem__(self, index):
         full_path, labels = self.images[index]
@@ -105,13 +118,18 @@ model.fc = nn.Linear(2048, 1000, bias=True)
 
 
 image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
-dataset = Objectnet(image_dir, transformations, objectnet2torch)
+dataset = Objectnet(image_dir, transformations, objectnet2imagenet, imagenet2torch)
 val_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=BATCH_SIZE, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
 
 N_EXAMPLES = 1
+
+all_classes = set()
+for label_list in imagenet2torch.values():
+    for label in label_list:
+        all_classes.add(label)
 
 total_top1, total_top5, total_examples = 0, 0, 0
 quotas = dict()
@@ -120,7 +138,6 @@ for class_int in all_classes:
 
 optimizer = Adam(model.parameters(), lr=0.0003)
 all_batches = []
-import pdb; pdb.set_trace()
 for batch, labels in val_loader:
     pass
 for batch_counter, (batch, labels) in enumerate(val_loader):
