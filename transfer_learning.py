@@ -86,7 +86,6 @@ def accuracy_objectnet(output, target):
     top5_correct = 0
     top1_correct = 0
 
-    import pdb; pdb.set_trace()
     for idx, prediction in enumerate(pred):
         pred_set = set(prediction.cpu().numpy().tolist())
         target_set = set([target[idx].cpu().numpy().tolist()])
@@ -123,6 +122,7 @@ val_loader = torch.utils.data.DataLoader(
 
 def evaluate():
     total_top1, total_top5, total_examples = 0, 0, 0
+    import pdb; pdb.set_trace()
     for batch, labels in val_loader:
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
