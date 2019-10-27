@@ -60,7 +60,6 @@ class Objectnet(Dataset):
             for image_name in images:
                 path = os.path.join(root, dirname, image_name)
                 self.images.append((path, label))
-        import pdb; pdb.set_trace()
 
         print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
         self.n_per_class(num_examples, test)
@@ -190,9 +189,9 @@ def evaluate():
     for batch, labels in test_loader:
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
-        import pdb; pdb.set_trace()
         with torch.no_grad():
             logits = model(batch)
+        import pdb; pdb.set_trace()
         accuracy_results = accuracy_objectnet_nobatch(logits, labels)
         score_dict[labels[0].item()] += accuracy_results
         total_top1 += accuracy_results[0]
