@@ -65,7 +65,6 @@ class Objectnet(Dataset):
         self.n_per_class(num_examples, test)
 
         self.classes_in_dataset = classes_in_dataset
-        import pdb; pdb.set_trace()
 
     def n_per_class(self, num_examples, test):
         valid_classes = set()
@@ -212,6 +211,7 @@ optimizer = Adam(model.parameters(), lr=0.0001)
 previous_accuracy = 0.
 top_score = 0.
 total_top1, total_top5, total_examples = 0, 0, 0
+
 for epoch in range(50):
     total_examples = 0
     print('starting epoch %s' % epoch)
