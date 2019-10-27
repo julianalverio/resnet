@@ -123,9 +123,7 @@ val_loader = torch.utils.data.DataLoader(
 def evaluate():
     total_top1, total_top5, total_examples = 0, 0, 0
     for batch, labels in val_loader:
-        import pdb; pdb.set_trace()
         labels = labels[0].to(DEVICE)
-        import pdb; pdb.set_trace()
         batch = batch.to(DEVICE)
         logits = model(batch)
         top1, top5 = accuracy_objectnet(logits, labels)
