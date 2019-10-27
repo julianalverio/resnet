@@ -243,6 +243,7 @@ try:
         print('top1 score: %s' % top1_score)
         print('top5 score: %s' % top5_score)
         print('best top5 score: %s' % top_score)
+        import pdb; pdb.set_trace()
         SAVER.write_to_disk()
 except:
     pass
