@@ -198,7 +198,7 @@ def evaluate():
     total_examples = len(test_loader)
     top1_score = total_top1 / total_examples
     top5_score = total_top5 / total_examples
-    SAVER.write_record(score_dict, total_examples, N_EXAMPLES)
+    SAVER.write_record(score_dict)
     return top1_score, top5_score
 
 
