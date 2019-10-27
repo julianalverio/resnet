@@ -32,7 +32,7 @@ for idx, name in enumerate(os.listdir('/storage/jalverio/objectnet-oct-24-d123')
     on2onlabel[name] = idx
 onlabel2name = {v: k for k, v in on2onlabel.items()}
 
-with open('/storage/jalverio/resnet/runs/objectnet2torch.pkl', 'rb') as f:
+with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
 torch2objectnet = dict()
 for objectnet_name, label_list in objectnet2torch.items():
@@ -140,7 +140,7 @@ class Saver(object):
 
     def write_to_disk(self):
         name = '%s_examples_%s_classes_%s_epochs' % (self.n_examples, self.num_classes, len(self.records))
-        with open('/storage/jalverio/resnet/' + name, 'wb') as f:
+        with open('/storage/jalverio/resnet/runs/' + name, 'wb') as f:
             pickle.dump(self.records, f)
         print('The saver has saved!')
 
