@@ -46,6 +46,7 @@ class Objectnet(Dataset):
         classes_in_dataset = set()
         for dirname in os.listdir(root):
             class_name = dirname_to_classname[dirname]
+            import pdb; pdb.set_trace()
             if overlap:
                 if class_name not in objectnet2torch:
                     continue
