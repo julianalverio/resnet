@@ -227,6 +227,7 @@ OVERLAP = args.overlap
 
 image_dir = '/storage/jalverio/objectnet-oct-24-d123/'
 dataset = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, test=False, overlap=OVERLAP)
+import pdb; pdb.set_trace()
 total_classes = len(dataset.classes_in_dataset)
 VALID_CLASSES = dataset.classes_in_dataset
 dataset_test = copy.deepcopy(dataset)
