@@ -49,7 +49,7 @@ class Objectnet(Dataset):
     def n_per_class(self, num_examples):
         valid_classes = list()
         import pdb; pdb.set_trace()
-        for label in self.images:
+        for _, label in self.images:
             valid_classes.extend(label)
         valid_classes = set(valid_classes)
 
