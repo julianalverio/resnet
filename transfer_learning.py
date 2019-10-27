@@ -21,6 +21,10 @@ transformations = transforms.Compose([
         normalize,
     ])
 
+with open('/storage/jalverio/resnet/objectnet_to_imagenet_mapping') as f:
+    import pdb; pdb.set_trace()
+    something = f.read()
+
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
 objectnet2torch_clean = dict()
