@@ -46,7 +46,9 @@ class Objectnet(Dataset):
             for image_name in images:
                 path = os.path.join(root, dirname, image_name)
                 self.images.append((path, labels))
-            print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
+        print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
+        import pdb; pdb.set_trace()
+
 
     def __getitem__(self, index):
         full_path, labels = self.images[index]
