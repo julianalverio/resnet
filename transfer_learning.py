@@ -9,7 +9,7 @@ import torch.nn as nn
 import time
 import json
 import pickle
-from torch.optim import adam
+from torch.optim import Adam
 
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -105,7 +105,7 @@ for class_int in all_classes:
     quotas[class_int] = 0
 
 import pdb; pdb.set_trace()
-optimizer = adam(model.parameters, lr=0.0003)
+optimizer = Adam(model.parameters(), lr=0.0003)
 all_batches = []
 for batch_counter, (batch, labels) in enumerate(val_loader):
     valid_idxs = []
