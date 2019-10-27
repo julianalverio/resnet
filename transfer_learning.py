@@ -123,13 +123,12 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 WORKERS = 50
 BATCH_SIZE = 32
 
-model = torchvision.models.resnet152(pretrained=True)
+model = torchvision.models.resnet152(pretrained=True).eval()
 for param in model.parameters():
     param.requires_grad = False
 model.fc = nn.Linear(2048, 1000, bias=True)
 # model = model.eval().to(DEVICE)
 # model = nn.DataParallel(model)
-
 
 
 
@@ -160,21 +159,31 @@ criterion = nn.CrossEntropyLoss()
 
 
 optimizer = Adam(model.parameters(), lr=0.0001)
-for batch_counter, (batch, labels) in enumerate(val_loader):
-    labels = labels[0]
-    logits = model(batch)
-    loss = criterion(logits, labels)
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-top1, top5 = accuracy_objectnet(logits, labels)
-total_top1 += top1
-total_top5 += top5
-total_examples += batch.shape[0]
-fraction_done = round(batch_counter / len(val_loader), 3)
-print('%s done' % fraction_done)
 
-print('total examples', total_examples)
-print('top5 score', total_top5 / total_examples)
-print('top1 score', total_top1 / total_examples)
+import pdb; pdb.set_trace()
+previous_accuracy = 0
+for epoch in range(50):
+    print('Starting epoch %s' % epoch)
+    for batch_counter, (batch, labels) in enumerate(val_loader):
+        labels = labels[0]
+        logits = model(batch)
+        loss = criterion(logits, labels)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+    top1, top5 = accuracy_objectnet(logits, labels)
+    total_top1 += top1
+    total_top5 += top5
+    total_examples += batch.shape[0]
+    fraction_done = round(batch_counter / len(val_loader), 3)
+    print('%s done' % fraction_done)
+
+    print('total examples', total_examples)
+    print('top5 score', total_top5 / total_examples)
+    print('top1 score', total_top1 / total_examples)
+    current_accuracy = total_top5 / total_examples
+    diff = current_accuracy - previous_accuracy
+    if diff < 0.05 and epoch >= 10:
+        print('breaking out now')
+        break
 
