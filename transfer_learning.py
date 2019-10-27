@@ -25,7 +25,7 @@ with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
 objectnet2torch_clean = dict()
 for key, value in objectnet2torch.items():
-    clean_key = key.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
+    clean_key = key.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '').replace('(', '').replace(')', '').replace('__', '_')
     objectnet2torch_clean[clean_key] = value
 objectnet2torch = objectnet2torch_clean
 
