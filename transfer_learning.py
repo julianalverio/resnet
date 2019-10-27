@@ -297,15 +297,19 @@ for epoch in range(50):
     training_top5_performance = total_training_top5 / total_examples
     print('training top1 score: %s' % training_top1_performance)
     print('training top5 score: %s' % training_top5_performance)
-    top1_score, top5_score = evaluate()
-    if top5_score > top_score:
-        top_score = top5_score
-    print('top1 score: %s' % top1_score)
-    print('top5 score: %s' % top5_score)
-    print('best top5 score: %s' % top_score)
-    SAVER.write_to_disk()
+    # top1_score, top5_score = evaluate()
+    # if top5_score > top_score:
+    #     top_score = top5_score
+    # print('top1 score: %s' % top1_score)
+    # print('top5 score: %s' % top5_score)
+    # print('best top5 score: %s' % top_score)
+    # SAVER.write_to_disk()
+    if (epoch + 1) % 10 == 0:
+        torch.save(model, '/storage/jalverio/resnet/saved_models/model%s' % epoch)
+        print('SAVED THE MODEL')
+
 
 import pdb; pdb.set_trace()
-SAVER.write_to_disk()
-print('BEST top5', top_score)
+# SAVER.write_to_disk()
+# print('BEST top5', top_score)
 
