@@ -69,9 +69,7 @@ class Objectnet(Dataset):
     def n_per_class(self, num_examples, test):
         import pdb; pdb.set_trace()
         valid_classes = set()
-        for _, label_list in self.images:
-            for label in label_list:
-                valid_classes.add(label)
+        [valid_classes.add(label) for _, label in self.images]
 
         quotas = dict()
         for label in valid_classes:
