@@ -215,7 +215,6 @@ total_top1, total_top5, total_examples = 0, 0, 0
 for epoch in range(50):
     total_examples = 0
     print('starting epoch %s' % epoch)
-    import pdb; pdb.set_trace()
     for batch_counter, (batch, labels) in enumerate(val_loader):
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
@@ -226,6 +225,7 @@ for epoch in range(50):
         optimizer.step()
         total_examples += batch.shape[0]
 
+    import pdb; pdb.set_trace()
     top1_score, current_accuracy = evaluate()
     if current_accuracy > top_score:
         top_score = current_accuracy
