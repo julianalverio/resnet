@@ -179,6 +179,11 @@ test_loader = torch.utils.data.DataLoader(
 
 SAVER = Saver(N_EXAMPLES, total_classes)
 
+import pdb; pdb.set_trace()
+images = dataset.images
+test_images = dataset_test.images
+
+
 
 # THIS DOES NOT USE BATCHING TO ALLOW FOR BETTER LOGGING
 def evaluate():
