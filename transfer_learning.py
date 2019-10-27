@@ -10,6 +10,7 @@ import time
 import json
 import pickle
 from torch.optim import Adam
+import torch.nn as nn
 
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -79,6 +80,19 @@ class Objectnet(Dataset):
         image = self.transform(image)
         return image, labels
 
+    def n_per_class(self, num_examples, valid_classes):
+        quotas = dict()
+        for label in valid_classes:
+            quotas[label] = num_examples
+        remaining_images = []
+        for path, label in self.images:
+            if label in valid_classes:
+                if quotas[label] < 0:
+                    quotas[label] -= 1
+                    remaining_images.append((path, label))
+        self.images = remaining_images
+        print('Purged some examples. %s classes and %s examples remaining.' % (len(valid_classes), len(self.images)))
+
     def __len__(self):
         return len(self.images)
 
@@ -106,8 +120,8 @@ def accuracy_objectnet(output, target):
 
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-WORKERS = 1
-BATCH_SIZE = 1
+WORKERS = 50
+BATCH_SIZE = 32
 
 model = torchvision.models.resnet152(pretrained=True)
 for param in model.parameters():
@@ -117,14 +131,10 @@ model.fc = nn.Linear(2048, 1000, bias=True)
 # model = nn.DataParallel(model)
 
 
-image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
-dataset = Objectnet(image_dir, transformations, objectnet2imagenet, imagenet2torch)
-val_loader = torch.utils.data.DataLoader(
-        dataset,
-        batch_size=BATCH_SIZE, shuffle=False,
-        num_workers=WORKERS, pin_memory=True)
 
-N_EXAMPLES = 1
+
+NUM_EXAMPLES = 1
+
 
 all_classes = set()
 for label_list in imagenet2torch.values():
@@ -136,29 +146,33 @@ quotas = dict()
 for class_int in all_classes:
     quotas[class_int] = 0
 
-optimizer = Adam(model.parameters(), lr=0.0003)
-all_batches = []
-for batch, labels in val_loader:
-    pass
-for batch_counter, (batch, labels) in enumerate(val_loader):
-    valid_idxs = []
-    labels = labels[0]
-    for idx, label in enumerate(labels):
-        if quotas[label.item()] < N_EXAMPLES:
-            valid_idxs.append(idx)
-            quotas[label.item()] += 1
-        labels = labels[valid_idxs]
-        batch = batch[valid_idxs]
-    if batch:
-        all_batches.append(batch)
 import pdb; pdb.set_trace()
-    # logits = model(batch)
-    # top1, top5 = accuracy_objectnet(logits, labels)
-    # total_top1 += top1
-    # total_top5 += top5
-    # total_examples += batch.shape[0]
-    # fraction_done = round(batch_counter / len(val_loader), 3)
-    # print('%s done' % fraction_done)
+
+
+image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
+dataset = Objectnet(image_dir, transformations, objectnet2imagenet, imagenet2torch)
+dataset.n_per_class(NUM_EXAMPLES, all_classes)
+val_loader = torch.utils.data.DataLoader(
+        dataset,
+        batch_size=BATCH_SIZE, shuffle=False,
+        num_workers=WORKERS, pin_memory=True)
+criterion = nn.CrossEntropyLoss()
+
+
+optimizer = Adam(model.parameters(), lr=0.0001)
+for batch_counter, (batch, labels) in enumerate(val_loader):
+    labels = labels[0]
+    logits = model(batch)
+    loss = criterion(logits, labels)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+top1, top5 = accuracy_objectnet(logits, labels)
+total_top1 += top1
+total_top5 += top5
+total_examples += batch.shape[0]
+fraction_done = round(batch_counter / len(val_loader), 3)
+print('%s done' % fraction_done)
 
 print('total examples', total_examples)
 print('top5 score', total_top5 / total_examples)
