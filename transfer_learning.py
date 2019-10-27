@@ -104,6 +104,7 @@ quotas = dict()
 for class_int in all_classes:
     quotas[class_int] = 0
 
+import pdb; pdb.set_trace()
 optimizer = adam(model.parameters, lr=0.0003)
 all_batches = []
 for batch_counter, (batch, labels) in enumerate(val_loader):
