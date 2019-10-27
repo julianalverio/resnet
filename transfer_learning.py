@@ -20,7 +20,7 @@ transformations = transforms.Compose([
         normalize,
     ])
 
-with open('/storage/jalverio/objectnet2torch.pkl', 'rb') as f:
+with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
 
 import pdb; pdb.set_trace()
