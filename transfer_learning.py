@@ -213,10 +213,10 @@ for epoch in range(50):
     total_examples = 0
     print('starting epoch %s' % epoch)
     for batch_counter, (batch, labels) in enumerate(val_loader):
+        import pdb; pdb.set_trace()
         labels = labels[0].to(DEVICE)
         batch = batch.to(DEVICE)
         logits = model(batch)
-        import pdb; pdb.set_trace()
         loss = criterion(logits, labels)
         optimizer.zero_grad()
         loss.backward()
