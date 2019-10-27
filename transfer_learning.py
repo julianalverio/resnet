@@ -37,6 +37,7 @@ class Objectnet(Dataset):
         self.images = []
         classes_in_dataset = set()
         for dirname in os.listdir(root):
+            import pdb; pdb.set_trace()
             class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
             if class_name not in objectnet2torch:
                 continue
@@ -47,7 +48,6 @@ class Objectnet(Dataset):
                 path = os.path.join(root, dirname, image_name)
                 self.images.append((path, labels))
         print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
-        import pdb; pdb.set_trace()
 
 
     def __getitem__(self, index):
