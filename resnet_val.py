@@ -10,26 +10,13 @@ import json
 import pickle
 
 
-with open('/storage/jalverio/resnet/pytorch_to_imagenet_2012_id_correct.json') as f:
-    torch2imagenet = json.load(f)
-    torch2imagenet = {int(k): int(v) for k, v in torch2imagenet.items()}
-    imagenet2torch = {v: k for k, v in torch2imagenet.items()}
+with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
+    objectnet2torch = pickle.load(f)
 
-
-# MAKE OBJECTNET2IMAGENET
-with open('/storage/jalverio/resnet/objectnet_to_imagenet_mapping', 'r') as f:
-    evaluated_str = eval(f.read())
-objectnet2imagenet = dict()
-for json_dict in evaluated_str:
-    for k, v in json_dict.items():
-        if k == 'name':
-            name = v
-        if k == 'ImageNet_category_ids':
-            imagenet_ids = v
-    if not imagenet_ids:
-        continue
-    name = name.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
-    objectnet2imagenet[name] = imagenet_ids
+all_classes = list()
+for label_list in objectnet2torch.values():
+    all_classes.extend(label_list)
+all_classes = set(all_classes)
 
 
 def accuracy(logits, target, data_type):
@@ -76,34 +63,22 @@ def accuracy_imagenet(output, target):
 
 
 class Objectnet(Dataset):
-    """Dataset wrapping images and target labels for Kaggle - Planet Amazon from Space competition.
-
-    Arguments:
-        A CSV file path
-        Path to image folder
-        Extension of images
-        PIL transforms
-    """
-
-    def __init__(self, root, transform, objectnet2imagenet, imagenet2torch):
+    def __init__(self, root, transform, objectnet2torch):
         self.root = root
         self.transform = transform
         self.images = []
-        success_counter = 0
+        classes_in_dataset = set()
         for dirname in os.listdir(root):
             class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
-            if class_name not in objectnet2imagenet:
+            if class_name not in objectnet2torch:
                 continue
-            success_counter += 1
-            labels = objectnet2imagenet[class_name]
-            new_labels = []
-            for label in labels:
-                new_labels.append(int(imagenet2torch[label - 1]))
-
+            classes_in_dataset.add(class_name)
+            labels = objectnet2torch[class_name]
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
                 path = os.path.join(root, dirname, image_name)
-                self.images.append((path, new_labels))
+                self.images.append((path, labels))
+            print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
 
     def __getitem__(self, index):
         full_path, labels = self.images[index]
@@ -112,8 +87,6 @@ class Objectnet(Dataset):
         image = self.transform(image)
         return image, labels
 
-    def __len__(self):
-        return len(self.images)
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 WORKERS = 100
@@ -138,7 +111,7 @@ transformations = transforms.Compose([
 
 # # PURE OBJECTNET STUFF
 # image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
-# dataset = Objectnet(image_dir, transformations, objectnet2imagenet, imagenet2torch)
+# dataset = Objectnet(image_dir, transformations, objectnet2torch)
 # data_type = 'objectnet'
 # val_loader = torch.utils.data.DataLoader(
 #         dataset,
@@ -148,10 +121,6 @@ transformations = transforms.Compose([
 
 
 # PURE IMAGENET STUFF
-valid_labels = set()
-for labels_list in objectnet2imagenet.values():
-    for label in labels_list:
-        valid_labels.add(label)
 imagenet_dir = '/storage/jalverio/resnet/imagenet_val/'
 imagenet_data = torchvision.datasets.ImageNet(imagenet_dir, transform=transformations, split='val')
 data_type = 'imagenet'
@@ -172,7 +141,7 @@ for batch_counter, (batch, labels) in enumerate(val_loader):
     if data_type == 'imagenet':
         labels = labels.to(DEVICE)
         labels_list = labels.clone().cpu().numpy().tolist()
-        good_idxs = [idx for idx, label in enumerate(labels_list) if label in valid_labels]
+        good_idxs = [idx for idx, label in enumerate(labels_list) if label in all_classes]
         batch = batch[good_idxs]
         labels = labels[good_idxs]
         all_labels.append(labels)

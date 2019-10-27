@@ -23,37 +23,29 @@ transformations = transforms.Compose([
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
 
-import pdb; pdb.set_trace()
+all_classes = list()
+for label_list in objectnet2torch.values():
+    all_classes.extend(label_list)
+all_classes = set(all_classes)
+
 
 class Objectnet(Dataset):
-    """Dataset wrapping images and target labels for Kaggle - Planet Amazon from Space competition.
-
-    Arguments:
-        A CSV file path
-        Path to image folder
-        Extension of images
-        PIL transforms
-    """
-
-    def __init__(self, root, transform, objectnet2imagenet, imagenet2torch):
+    def __init__(self, root, transform, objectnet2torch):
         self.root = root
         self.transform = transform
         self.images = []
-        success_counter = 0
+        classes_in_dataset = set()
         for dirname in os.listdir(root):
             class_name = dirname.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
-            if class_name not in objectnet2imagenet:
+            if class_name not in objectnet2torch:
                 continue
-            success_counter += 1
-            labels = objectnet2imagenet[class_name]
-            new_labels = []
-            for label in labels:
-                new_labels.append(int(imagenet2torch[label - 1]))
-
+            classes_in_dataset.add(class_name)
+            labels = objectnet2torch[class_name]
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
                 path = os.path.join(root, dirname, image_name)
-                self.images.append((path, new_labels))
+                self.images.append((path, labels))
+            print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
 
     def __getitem__(self, index):
         full_path, labels = self.images[index]
@@ -61,9 +53,6 @@ class Objectnet(Dataset):
         image = image.convert('RGB')
         image = self.transform(image)
         return image, labels
-
-    def __len__(self):
-        return len(self.images)
 
 
 def accuracy_objectnet(output, target):
@@ -101,8 +90,7 @@ model.fc = nn.Linear(2048, 1000, bias=True)
 
 
 image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
-dataset = Objectnet(image_dir, transformations, objectnet2imagenet, imagenet2torch)
-data_type = 'objectnet'
+dataset = Objectnet(image_dir, transformations, objectnet2torch)
 val_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=BATCH_SIZE, shuffle=False,
@@ -110,21 +98,15 @@ val_loader = torch.utils.data.DataLoader(
 
 N_EXAMPLES = 1
 
-all_classes = set()
-for label_list in objectnet2imagenet.values():
-    for label in label_list:
-        all_classes.add(label)
-
+total_top1, total_top5, total_examples = 0, 0, 0
 quotas = dict()
-total_top1, total_top5 = 0, 0
-total_examples = 0
 for class_int in all_classes:
     quotas[class_int] = 0
+
 
 for batch_counter, (batch, labels) in enumerate(val_loader):
     valid_idxs = []
     labels = labels[0]
-    import pdb; pdb.set_trace()
     for idx, label in enumerate(labels):
         if quotas[label.item()] < N_EXAMPLES:
             valid_idxs.append(idx)
