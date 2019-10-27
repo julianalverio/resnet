@@ -13,7 +13,7 @@ from torch.optim import Adam
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--num_examples', type=int)
+parser.add_argument('-n', type=int)
 args = parser.parse_args()
 
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -153,7 +153,7 @@ def accuracy_objectnet(output, target):
 
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-WORKERS = 1
+WORKERS = 50
 BATCH_SIZE = 32
 
 model = torchvision.models.resnet152(pretrained=True).eval()
@@ -163,7 +163,7 @@ model.fc = nn.Linear(2048, 1000, bias=True)
 model = model.eval().to(DEVICE)
 model = nn.DataParallel(model)
 
-N_EXAMPLES = args.num_examples
+N_EXAMPLES = args.n
 
 
 image_dir = '/storage/abarbu/objectnet-oct-24-d123/'
