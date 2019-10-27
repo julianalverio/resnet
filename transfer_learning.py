@@ -314,7 +314,7 @@ model = torch.load('/tmp/julian_model').eval().to(DEVICE)
 for batch, labels in test_loader:
     labels = labels.to(DEVICE)
     batch = batch.to(DEVICE)
-    with torch.no_grad()
+    with torch.no_grad():
         logits = model(batch)
     top1, top5 = accuracy_objectnet(logits, labels)
     total_top1 += top1
