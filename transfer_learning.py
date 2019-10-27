@@ -20,26 +20,13 @@ transformations = transforms.Compose([
         normalize,
     ])
 
-with open('/storage/jalverio/resnet/pytorch_to_imagenet_2012_id_correct.json') as f:
-    torch2imagenet = json.load(f)
-    torch2imagenet = {int(k): int(v) for k, v in torch2imagenet.items()}
-    imagenet2torch = {v: k for k, v in torch2imagenet.items()}
-
-
-# MAKE OBJECTNET2IMAGENET
-with open('/storage/jalverio/resnet/objectnet_to_imagenet_mapping', 'r') as f:
-    evaluated_str = eval(f.read())
-objectnet2imagenet = dict()
-for json_dict in evaluated_str:
-    for k, v in json_dict.items():
-        if k == 'name':
-            name = v
-        if k == 'ImageNet_category_ids':
-            imagenet_ids = v
-    if not imagenet_ids:
-        continue
-    name = name.replace('/', '_').replace('-', '_').replace(' ', '_').lower().replace("'", '')
-    objectnet2imagenet[name] = imagenet_ids
+import pdb; pdb.set_trace()
+with open('/storage/jalverio/resnet/mapping') as f:
+    big_mapping = eval(f.read())
+objectnet2torch = dict()
+for map in big_mapping:
+    objectnet2torch[map['name']] = map['pytorch_ImageNet_category_ids']
+import pdb; pdb.set_trace()
 
 
 class Objectnet(Dataset):
