@@ -298,7 +298,8 @@ for epoch in range(50):
         top1_score, top5_score = evaluate()
         print('top1 score', top1_score)
         print('top5 score', top5_score)
-        torch.save(model, '/storage/jalverio/resnet/saved_models/model%s' % epoch)
+        with open('/storage/jalverio/resnet/saved_models/model%s.pkl' % epoch, 'wb') as f:
+            pickle.dump(model.state_dict(), f)
     # if top5_score > top_score:
     #     top_score = top5_score
     # print('top1 score: %s' % top1_score)
