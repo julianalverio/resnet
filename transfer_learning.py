@@ -297,7 +297,8 @@ for epoch in range(50):
     if (epoch+1) % 10 == 0:
         top1_score, top5_score = evaluate()
         print('top1 score', top1_score)
-        print('top5 scoree', top5_score)
+        print('top5 score', top5_score)
+        torch.save(model, '/storage/jalverio/resnet/saved_models/model%s' % epoch)
     # if top5_score > top_score:
     #     top_score = top5_score
     # print('top1 score: %s' % top1_score)
