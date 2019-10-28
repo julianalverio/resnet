@@ -294,7 +294,7 @@ for epoch in range(50):
     training_top5_performance = total_training_top5 / total_examples
     print('training top1 score: %s' % training_top1_performance)
     print('training top5 score: %s' % training_top5_performance)
-    if epoch % 10 == 0:
+    if (epoch+1) % 10 == 0:
         top1_score, top5_score = evaluate()
         print('top1 score', top1_score)
         print('top5 scoree', top5_score)
