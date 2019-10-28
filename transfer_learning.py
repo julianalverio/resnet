@@ -272,60 +272,60 @@ previous_accuracy = 0.
 top_score = 0.
 total_top1, total_top5, total_examples = 0, 0, 0
 
-# for epoch in range(50):
-#     total_examples = 0
-#     total_training_top1 = 0
-#     total_training_top5 = 0
-#     print('starting epoch %s' % epoch)
-#     for batch_counter, (batch, labels) in enumerate(val_loader):
-#         labels = labels.to(DEVICE)
-#         batch = batch.to(DEVICE)
-#         logits = model(batch)
-#         top1, top5 = accuracy_objectnet(logits, labels)
-#         total_training_top1 += top1
-#         total_training_top5 += top5
-#         loss = criterion(logits, labels)
-#         optimizer.zero_grad()
-#         loss.backward()
-#         optimizer.step()
-#         total_examples += batch.shape[0]
-#
-#     training_top1_performance = total_training_top1 / total_examples
-#     training_top5_performance = total_training_top5 / total_examples
-#     print('training top1 score: %s' % training_top1_performance)
-#     print('training top5 score: %s' % training_top5_performance)
-#     # top1_score, top5_score = evaluate()
-#     # if top5_score > top_score:
-#     #     top_score = top5_score
-#     # print('top1 score: %s' % top1_score)
-#     # print('top5 score: %s' % top5_score)
-#     # print('best top5 score: %s' % top_score)
-#     # SAVER.write_to_disk()
-#     # if (epoch + 1) % 10 == 0:
-#     #     torch.save(model, '/storage/jalverio/resnet/saved_models/model%s' % epoch)
-#     #     print('SAVED THE MODEL')
-
-
-## CODE FOR LOADING AND EVALUATING A MODEL
-total_top1 = 0
-total_top5 = 0
-total_examples = 0
-model = torch.load('/tmp/julian_model').eval().to(DEVICE)
-with torch.no_grad():
-    for batch, labels in test_loader:
+for epoch in range(50):
+    total_examples = 0
+    total_training_top1 = 0
+    total_training_top5 = 0
+    print('starting epoch %s' % epoch)
+    for batch_counter, (batch, labels) in enumerate(val_loader):
         labels = labels.to(DEVICE)
         batch = batch.to(DEVICE)
         logits = model(batch)
         top1, top5 = accuracy_objectnet(logits, labels)
-        total_top1 += top1
-        total_top5 += top5
+        total_training_top1 += top1
+        total_training_top5 += top5
+        loss = criterion(logits, labels)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
         total_examples += batch.shape[0]
-    top1_score = total_top1 / total_examples
-    top5_score = total_top5 / total_examples
-    print('top1 score', top1_score)
-    print('top5 score', top5_score)
-    import pdb; pdb.set_trace()
-## END OF THAT BLOCK
+
+    training_top1_performance = total_training_top1 / total_examples
+    training_top5_performance = total_training_top5 / total_examples
+    print('training top1 score: %s' % training_top1_performance)
+    print('training top5 score: %s' % training_top5_performance)
+    # top1_score, top5_score = evaluate()
+    # if top5_score > top_score:
+    #     top_score = top5_score
+    # print('top1 score: %s' % top1_score)
+    # print('top5 score: %s' % top5_score)
+    # print('best top5 score: %s' % top_score)
+    # SAVER.write_to_disk()
+    # if (epoch + 1) % 10 == 0:
+    #     torch.save(model, '/storage/jalverio/resnet/saved_models/model%s' % epoch)
+    #     print('SAVED THE MODEL')
+
+
+# ## CODE FOR LOADING AND EVALUATING A MODEL
+# total_top1 = 0
+# total_top5 = 0
+# total_examples = 0
+# model = torch.load('/tmp/julian_model').eval().to(DEVICE)
+# with torch.no_grad():
+#     for batch, labels in test_loader:
+#         labels = labels.to(DEVICE)
+#         batch = batch.to(DEVICE)
+#         logits = model(batch)
+#         top1, top5 = accuracy_objectnet(logits, labels)
+#         total_top1 += top1
+#         total_top5 += top5
+#         total_examples += batch.shape[0]
+#     top1_score = total_top1 / total_examples
+#     top5_score = total_top5 / total_examples
+#     print('top1 score', top1_score)
+#     print('top5 score', top5_score)
+#     import pdb; pdb.set_trace()
+# ## END OF THAT BLOCK
 
 
 
