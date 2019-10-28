@@ -61,6 +61,7 @@ class Objectnet(Dataset):
                     continue
             classes_in_dataset.add(dirname)
             label = on2onlabel[dirname]
+            import pdb; pdb.set_trace()
             label = onlabel2oncompressed[label]
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
