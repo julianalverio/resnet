@@ -163,29 +163,6 @@ def accuracy_objectnet_nobatch(output, target):
     return np.zeros((2,))
 
 
-# class Saver(object):
-#     def __init__(self, n_examples, num_classes):
-#         self.records = []
-#         self.n_examples = n_examples
-#         self.num_classes = num_classes
-#         self.training_top1 = []
-#         self.training_top5 = []
-#
-#     def write_record(self, record):
-#         self.records.append(record)
-#
-#     def write_training_record(self, results):
-#         top1, top5 = results
-#         self.training_top1.append(top1)
-#         self.training_top5.append(top5)
-#
-#     def write_to_disk(self):
-#         name = '%s_examples_%s_classes_%s_epochs' % (self.n_examples, self.num_classes, len(self.records))
-#         with open('/storage/jalverio/resnet/runs/' + name, 'wb') as f:
-#             pickle.dump([self.records, self.training_top1, self.training_top5], f)
-#         print('The saver has saved!')
-
-
 class Saver(object):
     def __init__(self, n_examples, num_classes):
         self.n_examples = n_examples
