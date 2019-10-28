@@ -22,7 +22,7 @@ args = parser.parse_args()
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                  std=[0.229, 0.224, 0.225])
 transformations = transforms.Compose([
-        transforms.Resize(256),
+        transforms.Resize(224),
         transforms.CenterCrop(224),
         transforms.ToTensor(),
         normalize,
@@ -44,8 +44,7 @@ with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
 
 with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
-    import pdb; pdb.set_trace()
-    oncompressed2onlabel = json.load(f)
+    oncompressed2onlabel = eval(f.read())
     onlabel2oncompressed = {v:k for k,v in oncompressed2onlabel.items()}
 
 
