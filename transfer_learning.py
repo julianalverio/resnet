@@ -43,6 +43,10 @@ for objectnet_name, label_list in objectnet2torch.items():
 with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
 
+with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
+    oncompressed2onlabel = json.load(f)
+    onlabel2oncompressed = {v:k for k,v in oncompressed2onlabel.items()}
+
 
 class Objectnet(Dataset):
     def __init__(self, root, transform, objectnet2torch, num_examples, test, overlap, test_images=None):
@@ -57,6 +61,7 @@ class Objectnet(Dataset):
                     continue
             classes_in_dataset.add(dirname)
             label = on2onlabel[dirname]
+            label = onlabel2oncompressed[label]
             images = os.listdir(os.path.join(root, dirname))
             for image_name in images:
                 path = os.path.join(root, dirname, image_name)
@@ -214,7 +219,7 @@ BATCH_SIZE = 32
 model = torchvision.models.resnet152(pretrained=True).eval()
 for param in model.parameters():
     param.requires_grad = False
-model.fc = nn.Linear(2048, 1000, bias=True)
+model.fc = nn.Linear(2048, 113, bias=True)
 model = model.eval().to(DEVICE)
 # model = nn.DataParallel(model)
 
