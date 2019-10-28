@@ -44,6 +44,7 @@ with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
 
 with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
+    import pdb; pdb.set_trace()
     oncompressed2onlabel = json.load(f)
     onlabel2oncompressed = {v:k for k,v in oncompressed2onlabel.items()}
 
