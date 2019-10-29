@@ -1,12 +1,10 @@
 from torch.utils.data import Dataset
 import torchvision
 import torch
-import torch.nn as nn
 import os
 from PIL import Image
 from torchvision import transforms
 import torch.nn as nn
-import time
 import json
 import pickle
 from torch.optim import Adam
@@ -199,7 +197,6 @@ for param in model.parameters():
     param.requires_grad = False
 model.fc = nn.Linear(2048, 113, bias=True)
 model = model.eval().to(DEVICE)
-# model = nn.DataParallel(model)
 
 N_EXAMPLES = args.n
 OVERLAP = args.overlap
@@ -277,12 +274,12 @@ for epoch in range(50):
     training_top5_performance = total_training_top5 / total_examples
     print('training top1 score: %s' % training_top1_performance)
     print('training top5 score: %s' % training_top5_performance)
-    if (epoch+1) % 10 == 0:
-        top1_score, top5_score = evaluate()
-        print('top1 score', top1_score)
-        print('top5 score', top5_score)
-        with open('/storage/jalverio/resnet/saved_models/model%s.pkl' % epoch, 'wb') as f:
-            pickle.dump(model.state_dict(), f)
+    # if (epoch+1) % 10 == 0:
+    #     top1_score, top5_score = evaluate()
+    #     print('top1 score', top1_score)
+    #     print('top5 score', top5_score)
+    #     with open('/storage/jalverio/resnet/saved_models/model%s.pkl' % epoch, 'wb') as f:
+    #         pickle.dump(model.state_dict(), f)
     # if top5_score > top_score:
     #     top_score = top5_score
     # print('top1 score: %s' % top1_score)
@@ -292,29 +289,6 @@ for epoch in range(50):
     # if (epoch + 1) % 10 == 0:
     #     torch.save(model, '/storage/jalverio/resnet/saved_models/model%s' % epoch)
     #     print('SAVED THE MODEL')
-
-
-# ## CODE FOR LOADING AND EVALUATING A MODEL
-# total_top1 = 0
-# total_top5 = 0
-# total_examples = 0
-# model = torch.load('/tmp/julian_model').eval().to(DEVICE)
-# with torch.no_grad():
-#     for batch, labels in test_loader:
-#         labels = labels.to(DEVICE)
-#         batch = batch.to(DEVICE)
-#         logits = model(batch)
-#         top1, top5 = accuracy_objectnet(logits, labels)
-#         total_top1 += top1
-#         total_top5 += top5
-#         total_examples += batch.shape[0]
-#     top1_score = total_top1 / total_examples
-#     top5_score = total_top5 / total_examples
-#     print('top1 score', top1_score)
-#     print('top5 score', top5_score)
-#     import pdb; pdb.set_trace()
-# ## END OF THAT BLOCK
-
 
 
 
