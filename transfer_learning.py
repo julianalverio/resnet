@@ -239,7 +239,7 @@ test_loader = torch.utils.data.DataLoader(
         batch_size=256, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
 
-SAVER = Saver(N_EXAMPLES, total_classes)
+# SAVER = Saver(N_EXAMPLES, total_classes)
 
 
 # THIS DOES NOT USE BATCHING TO ALLOW FOR BETTER LOGGING
@@ -262,7 +262,7 @@ def evaluate():
         total_examples += batch.shape[0]
     top1_score = total_top1 / total_examples
     top5_score = total_top5 / total_examples
-    SAVER.write_evaluation_record(top1_score, top5_score)
+    # SAVER.write_evaluation_record(top1_score, top5_score)
     return top1_score, top5_score
 
 
@@ -298,7 +298,7 @@ for epoch in range(50):
         top1_score, top5_score = evaluate()
         print('top1 score', top1_score)
         print('top5 score', top5_score)
-        torch.save(model, '/storage/jalverio/resnet/saved_models/model%s' % epoch)
+    #     torch.save(model, '/storage/jalverio/resnet/saved_models/model%s' % epoch)
     # if top5_score > top_score:
     #     top_score = top5_score
     # print('top1 score: %s' % top1_score)
