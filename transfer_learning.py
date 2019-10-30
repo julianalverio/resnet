@@ -57,6 +57,8 @@ onlabel2oncompressed = dict()
 for idx, label in enumerate(my_labels):
     onlabel2oncompressed[label] = idx
 
+import pdb; pdb.set_trace()
+
 
 
 ## BUILD DATASETS
