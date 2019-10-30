@@ -51,6 +51,7 @@ my_labels = []
 for dirname in dirnames:
     if dirname_to_classname[dirname] in objectnet2torch:
         my_labels.append(on2onlabel[dirname])
+my_labels = set(my_labels)
 my_diff = my_labels.difference(david_labels)
 david_diff = david_labels.difference(my_labels)
 import pdb; pdb.set_trace()
