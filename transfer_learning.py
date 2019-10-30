@@ -9,7 +9,6 @@ import json
 import pickle
 from torch.optim import Adam
 import argparse
-import copy
 import numpy as np
 
 parser = argparse.ArgumentParser()
@@ -17,15 +16,14 @@ parser.add_argument('-n', type=int)
 parser.add_argument('--overlap', action='store_true')
 args = parser.parse_args()
 
-normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                 std=[0.229, 0.224, 0.225])
-transformations = transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        normalize,
-    ])
+DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+WORKERS = 50
+BATCH_SIZE = 32
+N_EXAMPLES = args.n
+OVERLAP = args.overlap
 
+
+## BUILD MAPPINGS
 on2onlabel = dict()
 for idx, name in enumerate(os.listdir('/storage/jalverio/objectnet-oct-24-d123')):
     on2onlabel[name] = idx
@@ -41,9 +39,20 @@ for objectnet_name, label_list in objectnet2torch.items():
 with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
 
-# with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
-#     oncompressed2onlabel = eval(f.read())
-#     onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
+with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
+    oncompressed2onlabel = eval(f.read())
+    onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
+
+
+## BUILD DATASETS
+normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                 std=[0.229, 0.224, 0.225])
+transformations = transforms.Compose([
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        normalize,
+    ])
 
 
 class Objectnet(Dataset):
@@ -57,6 +66,7 @@ class Objectnet(Dataset):
                     class_name = dirname_to_classname[dirname]
                     if class_name not in objectnet2torch:
                         continue
+
                 label = on2onlabel[dirname]
                 images = os.listdir(os.path.join(root, dirname))
                 if len(images) < num_examples:
@@ -82,51 +92,6 @@ class Objectnet(Dataset):
         else:
             self.images = test_images
 
-    # def remove_small_classes(self):
-    #     counter_dict = dict()
-    #     for _, label in self.images:
-    #         if label not in counter_dict:
-    #             counter_dict[label] = 1
-    #         else:
-    #             counter_dict[label] += 1
-    #     to_remove = []
-    #     for label, frequency in counter_dict.items():
-    #         if frequency < 64:
-    #             to_remove.append(label)
-    #     to_remove = set(to_remove)
-    #     new_images = []
-    #     for path, label in self.images:
-    #         if label not in to_remove:
-    #             new_images.append((path, label))
-    #     self.images = new_images
-    #
-    # def n_per_class(self, num_examples, test):
-    #     valid_classes = set()
-    #     [valid_classes.add(label) for _, label in self.images]
-    #
-    #     quotas = dict()
-    #     for label in valid_classes:
-    #         quotas[label] = 0
-    #     test_images = []
-    #     remaining_images = []
-    #     for path, objectnet_label in self.images:
-    #         if not test:
-    #             if quotas[objectnet_label] < num_examples:
-    #                 quotas[objectnet_label] += 1
-    #                 remaining_images.append((path, objectnet_label))
-    #             else:
-    #                 test_images.append((path, objectnet_label))
-    #         else:
-    #             if quotas[objectnet_label] < num_examples * 2:
-    #                 if quotas[objectnet_label] >= num_examples:
-    #                     remaining_images.append((path, objectnet_label))
-    #                 quotas[objectnet_label] += 1
-    #             else:
-    #                 test_images.append((path, objectnet_label))
-    #     self.images = remaining_images
-    #     self.test_images = test_images
-    #     print('Removed some examples. %s classes and %s examples remaining.' % (len(valid_classes), len(self.images)))
-
     def __getitem__(self, index):
         full_path, labels = self.images[index]
         image = Image.open(full_path)
@@ -138,41 +103,12 @@ class Objectnet(Dataset):
         return len(self.images)
 
 
-def accuracy(logits, targets):
-    _, pred = logits.topk(5, 1, True, True)
-    targets = targets.unsqueeze(1)
-    targets_repeat = targets.repeat(1, 5)
-    assert pred.shape == targets_repeat.shape
-    correct = ((pred - targets_repeat) == 0).float()
-    top1_score = correct[:, 0].sum()
-    top5_score = correct.sum()
-    return top1_score.item(), top5_score.item()
-
-
-DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-WORKERS = 50
-BATCH_SIZE = 32
-
-
-model = torchvision.models.resnet152(pretrained=True).eval()
-for param in model.parameters():
-    param.requires_grad = False
-model.fc = nn.Linear(2048, 1000, bias=True)
-model = model.eval().to(DEVICE)
-
-N_EXAMPLES = args.n
-OVERLAP = args.overlap
-
-
 image_dir = '/storage/jalverio/objectnet-oct-24-d123/'
 dataset = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, overlap=OVERLAP)
 dataset_test = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, OVERLAP, test_images=dataset.test_images)
-
 total_classes = len(dataset.classes_in_dataset)
-VALID_CLASSES = dataset.classes_in_dataset
-dataset_test = copy.deepcopy(dataset)
-dataset_test.images = dataset.test_images
-# dataset_test = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, test=True, overlap=OVERLAP)
+
+## LOADERS
 val_loader = torch.utils.data.DataLoader(
         dataset,
         batch_size=BATCH_SIZE, shuffle=False,
@@ -182,6 +118,18 @@ test_loader = torch.utils.data.DataLoader(
         dataset_test,
         batch_size=512, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
+
+
+## HELPER METHODS
+def accuracy(logits, targets):
+    _, pred = logits.topk(5, 1, True, True)
+    targets = targets.unsqueeze(1)
+    targets_repeat = targets.repeat(1, 5)
+    assert pred.shape == targets_repeat.shape
+    correct = ((pred - targets_repeat) == 0).float()
+    top1_score = correct[:, 0].sum()
+    top5_score = correct.sum()
+    return top1_score.item(), top5_score.item()
 
 
 def evaluate():
@@ -200,12 +148,20 @@ def evaluate():
     return top1_score, top5_score
 
 
+## BUILD MODEL
+model = torchvision.models.resnet152(pretrained=True).eval()
+for param in model.parameters():
+    param.requires_grad = False
+model.fc = nn.Linear(2048, 1000, bias=True)
+model = model.eval().to(DEVICE)
+
+
+## TRAINING
 criterion = nn.CrossEntropyLoss().to(DEVICE)
 optimizer = Adam(model.parameters(), lr=0.0001)
 previous_accuracy = 0.
 top_score = 0.
 total_top1, total_top5, total_examples = 0, 0, 0
-
 for epoch in range(50):
     total_examples = 0
     total_training_top1 = 0
@@ -232,43 +188,5 @@ for epoch in range(50):
         top1_score, top5_score = evaluate()
         print('top1 score', top1_score)
         print('top5 score', top5_score)
-    #     torch.save(model, '/storage/jalverio/resnet/saved_models/model%s' % epoch)
-    # if top5_score > top_score:
-    #     top_score = top5_score
-    # print('top1 score: %s' % top1_score)
-    # print('top5 score: %s' % top5_score)
-    # print('best top5 score: %s' % top_score)
-    # SAVER.write_to_disk()
-    # if (epoch + 1) % 10 == 0:
-    #     torch.save(model, '/storage/jalverio/resnet/saved_models/model%s' % epoch)
-    #     print('SAVED THE MODEL')
-
-
-# ## CODE FOR LOADING AND EVALUATING A MODEL
-# total_top1 = 0
-# total_top5 = 0
-# total_examples = 0
-# model = torch.load('/tmp/julian_model').eval().to(DEVICE)
-# with torch.no_grad():
-#     for batch, labels in test_loader:
-#         labels = labels.to(DEVICE)
-#         batch = batch.to(DEVICE)
-#         logits = model(batch)
-#         top1, top5 = accuracy_objectnet(logits, labels)
-#         total_top1 += top1
-#         total_top5 += top5
-#         total_examples += batch.shape[0]
-#     top1_score = total_top1 / total_examples
-#     top5_score = total_top5 / total_examples
-#     print('top1 score', top1_score)
-#     print('top5 score', top5_score)
-#     import pdb; pdb.set_trace()
-# ## END OF THAT BLOCK
-
-
-
 
 import pdb; pdb.set_trace()
-# SAVER.write_to_disk()
-# print('BEST top5', top_score)
-
