@@ -1,12 +1,10 @@
 from torch.utils.data import Dataset
 import torchvision
 import torch
-import torch.nn as nn
 import os
 from PIL import Image
 from torchvision import transforms
 import torch.nn as nn
-import time
 import json
 import pickle
 from torch.optim import Adam
@@ -43,77 +41,91 @@ for objectnet_name, label_list in objectnet2torch.items():
 with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
 
+with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
+    oncompressed2onlabel = eval(f.read())
+    onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
+
 
 class Objectnet(Dataset):
-    def __init__(self, root, transform, objectnet2torch, num_examples, test, overlap, test_images=None):
-        self.root = root
+    def __init__(self, root, transform, objectnet2torch, num_examples, overlap, test_images=None):
         self.transform = transform
-        self.images = []
-        classes_in_dataset = set()
-        for dirname in os.listdir(root):
-            if overlap:
-                class_name = dirname_to_classname[dirname]
-                if class_name not in objectnet2torch:
+        if test_images is None:
+            self.classes_in_dataset = set()
+            images_dict = dict()
+            for dirname in os.listdir(root):
+                if overlap:
+                    class_name = dirname_to_classname[dirname]
+                    if class_name not in objectnet2torch:
+                        continue
+                label = on2onlabel[dirname]
+                images = os.listdir(os.path.join(root, dirname))
+                if len(images) < num_examples:
                     continue
-            classes_in_dataset.add(dirname)
-            label = on2onlabel[dirname]
-            images = os.listdir(os.path.join(root, dirname))
-            for image_name in images:
-                path = os.path.join(root, dirname, image_name)
-                self.images.append((path, label))
+                for image_name in images:
+                    path = os.path.join(root, dirname, image_name)
+                    if label not in images_dict:
+                        images_dict[label] = []
+                    images_dict[label].append(path)
+                self.classes_in_dataset.add(dirname)
+            self.images = []
+            self.test_images = []
+            for label in images_dict.keys():
+                idxs_to_choose_from = list(range(len(images_dict[label])))
+                chosen_idxs = np.random.choice(idxs_to_choose_from, num_examples, replace=False)
+                class_training_idxs = set(chosen_idxs.tolist())
+                class_training_images = [images_dict[label][idx] for idx in class_training_idxs]
+                test_training_idxs = [x for x in range(len(images_dict[label])) if x not in class_training_idxs]
+                class_test_images = [images_dict[label][idx] for idx in test_training_idxs]
+                [self.images.append((image, label)) for image in class_training_images]
+                [self.test_images.append((image, label)) for image in class_test_images]
+            print('Dataset has %s classes, %s training examples and %s test examples' % (len(self.classes_in_dataset), len(self.images), len(self.test_images)))
+        else:
+            self.images = test_images
 
-        if num_examples == 64:
-            self.remove_small_classes()
-
-        print('Created objectnet dataset with %s classes' % len(classes_in_dataset))
-        self.n_per_class(num_examples, test)
-
-        self.classes_in_dataset = classes_in_dataset
-
-    def remove_small_classes(self):
-        counter_dict = dict()
-        for _, label in self.images:
-            if label not in counter_dict:
-                counter_dict[label] = 1
-            else:
-                counter_dict[label] += 1
-        to_remove = []
-        for label, frequency in counter_dict.items():
-            if frequency < 64:
-                to_remove.append(label)
-        to_remove = set(to_remove)
-        new_images = []
-        for path, label in self.images:
-            if label not in to_remove:
-                new_images.append((path, label))
-        self.images = new_images
-
-    def n_per_class(self, num_examples, test):
-        valid_classes = set()
-        [valid_classes.add(label) for _, label in self.images]
-
-        quotas = dict()
-        for label in valid_classes:
-            quotas[label] = 0
-        test_images = []
-        remaining_images = []
-        for path, objectnet_label in self.images:
-            if not test:
-                if quotas[objectnet_label] < num_examples:
-                    quotas[objectnet_label] += 1
-                    remaining_images.append((path, objectnet_label))
-                else:
-                    test_images.append((path, objectnet_label))
-            else:
-                if quotas[objectnet_label] < num_examples * 2:
-                    if quotas[objectnet_label] >= num_examples:
-                        remaining_images.append((path, objectnet_label))
-                    quotas[objectnet_label] += 1
-                else:
-                    test_images.append((path, objectnet_label))
-        self.images = remaining_images
-        self.test_images = test_images
-        print('Removed some examples. %s classes and %s examples remaining.' % (len(valid_classes), len(self.images)))
+    # def remove_small_classes(self):
+    #     counter_dict = dict()
+    #     for _, label in self.images:
+    #         if label not in counter_dict:
+    #             counter_dict[label] = 1
+    #         else:
+    #             counter_dict[label] += 1
+    #     to_remove = []
+    #     for label, frequency in counter_dict.items():
+    #         if frequency < 64:
+    #             to_remove.append(label)
+    #     to_remove = set(to_remove)
+    #     new_images = []
+    #     for path, label in self.images:
+    #         if label not in to_remove:
+    #             new_images.append((path, label))
+    #     self.images = new_images
+    #
+    # def n_per_class(self, num_examples, test):
+    #     valid_classes = set()
+    #     [valid_classes.add(label) for _, label in self.images]
+    #
+    #     quotas = dict()
+    #     for label in valid_classes:
+    #         quotas[label] = 0
+    #     test_images = []
+    #     remaining_images = []
+    #     for path, objectnet_label in self.images:
+    #         if not test:
+    #             if quotas[objectnet_label] < num_examples:
+    #                 quotas[objectnet_label] += 1
+    #                 remaining_images.append((path, objectnet_label))
+    #             else:
+    #                 test_images.append((path, objectnet_label))
+    #         else:
+    #             if quotas[objectnet_label] < num_examples * 2:
+    #                 if quotas[objectnet_label] >= num_examples:
+    #                     remaining_images.append((path, objectnet_label))
+    #                 quotas[objectnet_label] += 1
+    #             else:
+    #                 test_images.append((path, objectnet_label))
+    #     self.images = remaining_images
+    #     self.test_images = test_images
+    #     print('Removed some examples. %s classes and %s examples remaining.' % (len(valid_classes), len(self.images)))
 
     def __getitem__(self, index):
         full_path, labels = self.images[index]
@@ -126,22 +138,6 @@ class Objectnet(Dataset):
         return len(self.images)
 
 
-# def accuracy_objectnet(output, target):
-#     with torch.no_grad():
-#         _, pred = output.topk(5, 1, True, True)
-#     top5_correct = 0
-#     top1_correct = 0
-#
-#     for idx, prediction in enumerate(pred):
-#         pred_set = set(prediction.cpu().numpy().tolist())
-#         target_set = set([target[idx].cpu().numpy().tolist()])
-#         if pred_set.intersection(target_set):
-#             top5_correct += 1
-#
-#         if prediction[0].item() in target_set:
-#             top1_correct += 1
-#     return top1_correct, top5_correct
-
 def accuracy(logits, targets):
     _, pred = logits.topk(5, 1, True, True)
     targets = targets.unsqueeze(1)
@@ -151,69 +147,6 @@ def accuracy(logits, targets):
     top1_score = correct[:, 0].sum()
     top5_score = correct.sum()
     return top1_score.item(), top5_score.item()
-
-
-# def accuracy_objectnet_nobatch(output, target):
-#     _, pred = output.topk(5, 1, True, True)
-#     pred_list = np.squeeze(pred.cpu().numpy()).tolist()
-#     pred_set = pred_list
-#     # top 1 succeeded
-#     if pred_list[0] == target.item():
-#         return np.ones((2,))
-#     # top 5 succeeded
-#     if target.item() in pred_set:
-#         return np.array([0, 1])
-#     # neither succeeded
-#     return np.zeros((2,))
-
-
-# class Saver(object):
-#     def __init__(self, n_examples, num_classes):
-#         self.records = []
-#         self.n_examples = n_examples
-#         self.num_classes = num_classes
-#         self.training_top1 = []
-#         self.training_top5 = []
-#
-#     def write_record(self, record):
-#         self.records.append(record)
-#
-#     def write_training_record(self, results):
-#         top1, top5 = results
-#         self.training_top1.append(top1)
-#         self.training_top5.append(top5)
-#
-#     def write_to_disk(self):
-#         name = '%s_examples_%s_classes_%s_epochs' % (self.n_examples, self.num_classes, len(self.records))
-#         with open('/storage/jalverio/resnet/runs/' + name, 'wb') as f:
-#             pickle.dump([self.records, self.training_top1, self.training_top5], f)
-#         print('The saver has saved!')
-
-
-class Saver(object):
-    def __init__(self, n_examples, num_classes):
-        self.n_examples = n_examples
-        self.num_classes = num_classes
-        self.training_top1 = []
-        self.training_top5 = []
-        self.evaluation_top1 = []
-        self.evaluation_top5 = []
-
-    def write_evaluation_record(self, top1, top5):
-        self.evaluation_top1.append(top1)
-        self.evaluation_top5.append(top5)
-
-    def write_training_record(self, results):
-        top1, top5 = results
-        self.training_top1.append(top1)
-        self.training_top5.append(top5)
-
-    def write_to_disk(self):
-        name = '%s_examples_%s_classes_%s_epochs' % (self.n_examples, self.num_classes, len(self.evaluation_top5))
-        with open('/storage/jalverio/resnet/runs/' + name, 'wb') as f:
-            pickle.dump([self.training_top1, self.training_top5, self.evaluation_top1, self.evaluation_top5], f)
-        print('The saver has saved!')
-
 
 
 DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -226,7 +159,6 @@ for param in model.parameters():
     param.requires_grad = False
 model.fc = nn.Linear(2048, 1000, bias=True)
 model = model.eval().to(DEVICE)
-# model = nn.DataParallel(model)
 
 N_EXAMPLES = args.n
 OVERLAP = args.overlap
@@ -246,13 +178,13 @@ val_loader = torch.utils.data.DataLoader(
 
 test_loader = torch.utils.data.DataLoader(
         dataset_test,
-        batch_size=256, shuffle=False,
+        batch_size=512, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
+
 
 def evaluate():
     total_top1, total_top5, total_examples = 0, 0, 0
     for batch_counter, (batch, labels) in enumerate(test_loader):
-        print(batch_counter / len(test_loader))
         labels = labels.to(DEVICE)
         batch = batch.to(DEVICE)
         with torch.no_grad():
