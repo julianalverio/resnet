@@ -126,35 +126,46 @@ class Objectnet(Dataset):
         return len(self.images)
 
 
-def accuracy_objectnet(output, target):
-    with torch.no_grad():
-        _, pred = output.topk(5, 1, True, True)
-    top5_correct = 0
-    top1_correct = 0
+# def accuracy_objectnet(output, target):
+#     with torch.no_grad():
+#         _, pred = output.topk(5, 1, True, True)
+#     top5_correct = 0
+#     top1_correct = 0
+#
+#     for idx, prediction in enumerate(pred):
+#         pred_set = set(prediction.cpu().numpy().tolist())
+#         target_set = set([target[idx].cpu().numpy().tolist()])
+#         if pred_set.intersection(target_set):
+#             top5_correct += 1
+#
+#         if prediction[0].item() in target_set:
+#             top1_correct += 1
+#     return top1_correct, top5_correct
 
-    for idx, prediction in enumerate(pred):
-        pred_set = set(prediction.cpu().numpy().tolist())
-        target_set = set([target[idx].cpu().numpy().tolist()])
-        if pred_set.intersection(target_set):
-            top5_correct += 1
+def accuracy(logits, targets):
+    import pdb; pdb.set_trace()
+    _, pred = logits.topk(5, 1, True, True)
+    targets = targets.unsqueeze(1)
+    targets_repeat = targets.repeat(1, 5)
+    assert pred.shape == targets_repeat.shape
+    correct = ((pred - targets_repeat) == 0).float()
+    top1_score = correct[:, 0].sum()
+    top5_score = correct.sum()
+    return top1_score.item(), top5_score.item()
 
-        if prediction[0].item() in target_set:
-            top1_correct += 1
-    return top1_correct, top5_correct
 
-
-def accuracy_objectnet_nobatch(output, target):
-    _, pred = output.topk(5, 1, True, True)
-    pred_list = np.squeeze(pred.cpu().numpy()).tolist()
-    pred_set = pred_list
-    # top 1 succeeded
-    if pred_list[0] == target.item():
-        return np.ones((2,))
-    # top 5 succeeded
-    if target.item() in pred_set:
-        return np.array([0, 1])
-    # neither succeeded
-    return np.zeros((2,))
+# def accuracy_objectnet_nobatch(output, target):
+#     _, pred = output.topk(5, 1, True, True)
+#     pred_list = np.squeeze(pred.cpu().numpy()).tolist()
+#     pred_set = pred_list
+#     # top 1 succeeded
+#     if pred_list[0] == target.item():
+#         return np.ones((2,))
+#     # top 5 succeeded
+#     if target.item() in pred_set:
+#         return np.array([0, 1])
+#     # neither succeeded
+#     return np.zeros((2,))
 
 
 # class Saver(object):
@@ -239,30 +250,20 @@ test_loader = torch.utils.data.DataLoader(
         batch_size=256, shuffle=False,
         num_workers=WORKERS, pin_memory=True)
 
-# SAVER = Saver(N_EXAMPLES, total_classes)
-
-
-# THIS DOES NOT USE BATCHING TO ALLOW FOR BETTER LOGGING
 def evaluate():
-    total_top1, total_top5 = 0, 0
-    total_examples = 0
-    score_dict = dict()
-    for class_name in VALID_CLASSES:
-        score_dict[on2onlabel[class_name]] = np.zeros((2,))
-    for batch, labels in test_loader:
+    total_top1, total_top5, total_examples = 0, 0, 0
+    for batch_counter, (batch, labels) in enumerate(test_loader):
+        print(batch_counter / len(test_loader))
         labels = labels.to(DEVICE)
         batch = batch.to(DEVICE)
         with torch.no_grad():
             logits = model(batch)
-        # accuracy_results = accuracy_objectnet_nobatch(logits, labels)
-        top1, top5 = accuracy_objectnet(logits, labels)
-        # score_dict[labels.item()] += accuracy_results
+        top1, top5 = accuracy(logits, labels)
         total_top1 += top1
         total_top5 += top5
         total_examples += batch.shape[0]
     top1_score = total_top1 / total_examples
     top5_score = total_top5 / total_examples
-    # SAVER.write_evaluation_record(top1_score, top5_score)
     return top1_score, top5_score
 
 
@@ -281,7 +282,7 @@ for epoch in range(50):
         labels = labels.to(DEVICE)
         batch = batch.to(DEVICE)
         logits = model(batch)
-        top1, top5 = accuracy_objectnet(logits, labels)
+        top1, top5 = accuracy(logits, labels)
         total_training_top1 += top1
         total_training_top5 += top5
         loss = criterion(logits, labels)
