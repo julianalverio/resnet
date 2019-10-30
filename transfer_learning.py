@@ -165,7 +165,9 @@ OVERLAP = args.overlap
 
 
 image_dir = '/storage/jalverio/objectnet-oct-24-d123/'
-dataset = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, test=False, overlap=OVERLAP)
+dataset = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, overlap=OVERLAP)
+dataset_test = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, OVERLAP, test_images=dataset.test_images)
+
 total_classes = len(dataset.classes_in_dataset)
 VALID_CLASSES = dataset.classes_in_dataset
 dataset_test = copy.deepcopy(dataset)
