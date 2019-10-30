@@ -41,9 +41,9 @@ for objectnet_name, label_list in objectnet2torch.items():
 with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
 
-with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
-    oncompressed2onlabel = eval(f.read())
-    onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
+# with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
+#     oncompressed2onlabel = eval(f.read())
+#     onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
 
 
 class Objectnet(Dataset):
