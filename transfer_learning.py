@@ -43,6 +43,10 @@ with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
     oncompressed2onlabel = eval(f.read())
     onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
 
+
+
+
+
 david_labels = set(onlabel2oncompressed.keys())
 
 root = '/storage/jalverio/objectnet-oct-24-d123/'
@@ -54,6 +58,10 @@ for dirname in dirnames:
 my_labels = set(my_labels)
 my_diff = my_labels.difference(david_labels)
 david_diff = david_labels.difference(my_labels)
+
+onlabel2oncompressed = dict()
+for idx, label in enumerate(my_labels):
+    onlabel2oncompressed[label] = idx
 import pdb; pdb.set_trace()
 
 
