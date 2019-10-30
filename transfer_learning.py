@@ -44,7 +44,8 @@ with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
     onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
 
 david_labels = set(onlabel2oncompressed.keys())
-my_labels = set(objectnet2torch.keys())
+
+my_labels = set([on2onlabel[label] for label in set(objectnet2torch.keys())])
 
 my_diff = my_labels.difference(david_labels)
 david_diff = david_labels.difference(my_labels)
