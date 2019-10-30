@@ -47,8 +47,10 @@ david_labels = set(onlabel2oncompressed.keys())
 
 root = '/storage/jalverio/objectnet-oct-24-d123/'
 dirnames = os.listdir(root)
-my_labels = set([on2onlabel[dirname] for dirname in dirnames])
-
+my_labels = []
+for dirname in dirnames:
+    if dirname_to_classname[dirname] in objectnet2torch:
+        my_labels.append(on2onlabel[dirname])
 my_diff = my_labels.difference(david_labels)
 david_diff = david_labels.difference(my_labels)
 import pdb; pdb.set_trace()
