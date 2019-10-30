@@ -45,7 +45,9 @@ with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
 
 david_labels = set(onlabel2oncompressed.keys())
 
-my_labels = set([on2onlabel[label] for label in set(objectnet2torch.keys())])
+root = '/storage/jalverio/objectnet-oct-24-d123/'
+dirnames = os.listdir(root)
+my_labels = set([on2onlabel[dirname] for dirname in dirnames])
 
 my_diff = my_labels.difference(david_labels)
 david_diff = david_labels.difference(my_labels)
