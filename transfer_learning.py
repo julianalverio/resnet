@@ -43,6 +43,15 @@ with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
     oncompressed2onlabel = eval(f.read())
     onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
 
+david_labels = set(onlabel2oncompressed.keys())
+my_labels = set(objectnet2torch.keys())
+
+my_diff = my_labels.difference(david_labels)
+david_diff = david_labels.difference(my_labels)
+import pdb; pdb.set_trace()
+
+
+
 
 ## BUILD DATASETS
 normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406],
@@ -54,6 +63,7 @@ transformations = transforms.Compose([
         normalize,
     ])
 
+all_labels = set()  # remove
 
 class Objectnet(Dataset):
     def __init__(self, root, transform, objectnet2torch, num_examples, overlap, test_images=None):
@@ -66,8 +76,9 @@ class Objectnet(Dataset):
                     class_name = dirname_to_classname[dirname]
                     if class_name not in objectnet2torch:
                         continue
-
                 label = on2onlabel[dirname]
+                all_labels.append(label)  # remove
+
                 images = os.listdir(os.path.join(root, dirname))
                 if len(images) < num_examples:
                     continue
@@ -89,6 +100,12 @@ class Objectnet(Dataset):
                 [self.images.append((image, label)) for image in class_training_images]
                 [self.test_images.append((image, label)) for image in class_test_images]
             print('Dataset has %s classes, %s training examples and %s test examples' % (len(self.classes_in_dataset), len(self.images), len(self.test_images)))
+
+            # remove
+            import pdb; pdb.set_trace()
+            david_all_labels = set(onlabel2oncompressed.keys())
+            david_diff = david_all_labels.difference(all_labels)
+            my_diff = all_labels.difference(david_all_labels)
         else:
             self.images = test_images
 
