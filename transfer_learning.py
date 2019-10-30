@@ -143,7 +143,6 @@ class Objectnet(Dataset):
 #     return top1_correct, top5_correct
 
 def accuracy(logits, targets):
-    import pdb; pdb.set_trace()
     _, pred = logits.topk(5, 1, True, True)
     targets = targets.unsqueeze(1)
     targets_repeat = targets.repeat(1, 5)
