@@ -29,7 +29,6 @@ for idx, name in enumerate(os.listdir('/storage/jalverio/objectnet-oct-24-d123')
     on2onlabel[name] = idx
 onlabel2name = {v: k for k, v in on2onlabel.items()}
 
-import pdb; pdb.set_trace()
 
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
@@ -45,6 +44,9 @@ with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
 # with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
 #     oncompressed2onlabel = eval(f.read())
 #     onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
+
+
+import pdb; pdb.set_trace()
 
 
 root = '/storage/jalverio/objectnet-oct-24-d123/'
