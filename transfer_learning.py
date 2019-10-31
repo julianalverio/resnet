@@ -30,7 +30,7 @@ OVERLAP = args.overlap
 
 import pdb; pdb.set_trace()
 with open('/storage/jalverio/resnet/objectnet_label_to_id_number.json') as f:
-    onlabel2name = json.loads(f.read())
+    onname2label = json.loads(f.read())
 
 
 
