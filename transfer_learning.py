@@ -29,6 +29,8 @@ for idx, name in enumerate(os.listdir('/storage/jalverio/objectnet-oct-24-d123')
     on2onlabel[name] = idx
 onlabel2name = {v: k for k, v in on2onlabel.items()}
 
+import pdb; pdb.set_trace()
+
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
 torch2objectnet = dict()
