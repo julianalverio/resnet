@@ -138,6 +138,9 @@ dataset = Objectnet(image_dir, transformations, objectnet2torch, onname2label, o
 dataset_test = Objectnet(image_dir, transformations, objectnet2torch, onname2label, onlabel2oncompressed, N_EXAMPLES, OVERLAP, test_images=dataset.test_images)
 total_classes = len(dataset.classes_in_dataset)
 
+import pdb; pdb.set_trace()
+all_labels = sorted(set([x for x in dataset.images[1]]))
+
 ## LOADERS
 val_loader = torch.utils.data.DataLoader(
         dataset,
