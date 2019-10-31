@@ -139,7 +139,7 @@ dataset_test = Objectnet(image_dir, transformations, objectnet2torch, onname2lab
 total_classes = len(dataset.classes_in_dataset)
 
 import pdb; pdb.set_trace()
-all_labels = sorted(set([x for x in dataset.images[1]]))
+all_labels = sorted(set([x[1] for x in dataset.images]))
 
 ## LOADERS
 val_loader = torch.utils.data.DataLoader(
