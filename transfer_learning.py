@@ -21,13 +21,26 @@ WORKERS = 50
 BATCH_SIZE = 32
 N_EXAMPLES = args.n
 OVERLAP = args.overlap
+#
+# import pdb; pdb.set_trace()
+# with open('/Users/julianalverio/code/resnet/objectnet_to_imagenet_mapping') as f:
+#     map_list = eval(f.read())
+#
+# for image_map in map_list:
+
+import pdb; pdb.set_trace()
+with open('/storage/jalverio/resnet/objectnet_label_to_id_number.json') as f:
+    onlabel2name = json.loads(f.read())
+
+
+
 
 
 ## BUILD MAPPINGS
-on2onlabel = dict()
-for idx, name in enumerate(os.listdir('/storage/jalverio/objectnet-oct-24-d123')):
-    on2onlabel[name] = idx
-onlabel2name = {v: k for k, v in on2onlabel.items()}
+# on2onlabel = dict()
+# for idx, name in enumerate(os.listdir('/storage/jalverio/objectnet-oct-24-d123')):
+#     on2onlabel[name] = idx
+# onlabel2name = {v: k for k, v in on2onlabel.items()}
 
 
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
@@ -40,29 +53,29 @@ for objectnet_name, label_list in objectnet2torch.items():
 with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
     dirname_to_classname = json.load(f)
 
-# David's stuff
-# with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
-#     oncompressed2onlabel = eval(f.read())
-#     onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
+with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
+    oncompressed2onlabel = eval(f.read())
+    onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
 
+
+
+
+
+# root = '/storage/jalverio/objectnet-oct-24-d123/'
+# dirnames = os.listdir(root)
+# all_labels = []
+# for dirname in dirnames:
+#     if dirname_to_classname[dirname] in objectnet2torch:
+#         all_labels.append(on2onlabel[dirname])
+# my_labels = set(all_labels)
+#
+# onlabel2oncompressed = dict()
+# for idx, label in enumerate(my_labels):
+#     onlabel2oncompressed[label] = idx
 
 import pdb; pdb.set_trace()
-
-
-root = '/storage/jalverio/objectnet-oct-24-d123/'
-dirnames = os.listdir(root)
-all_labels = []
-for dirname in dirnames:
-    if dirname_to_classname[dirname] in objectnet2torch:
-        all_labels.append(on2onlabel[dirname])
-my_labels = set(all_labels)
-
-onlabel2oncompressed = dict()
-for idx, label in enumerate(my_labels):
-    onlabel2oncompressed[label] = idx
-
-import pdb; pdb.set_trace()
-
+correct_set = objectnet2torch.keys()
+david_set = onlabel2name.values()
 
 
 ## BUILD DATASETS
@@ -76,7 +89,7 @@ transformations = transforms.Compose([
     ])
 
 class Objectnet(Dataset):
-    def __init__(self, root, transform, objectnet2torch, num_examples, overlap, test_images=None):
+    def __init__(self, root, transform, objectnet2torch, on2onlabel, onlabel2oncompressed, num_examples, overlap, test_images=None):
         self.transform = transform
         if test_images is None:
             self.classes_in_dataset = set()
@@ -125,8 +138,8 @@ class Objectnet(Dataset):
 
 
 image_dir = '/storage/jalverio/objectnet-oct-24-d123/'
-dataset = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, overlap=OVERLAP)
-dataset_test = Objectnet(image_dir, transformations, objectnet2torch, N_EXAMPLES, OVERLAP, test_images=dataset.test_images)
+dataset = Objectnet(image_dir, transformations, objectnet2torch, onlabel2name, onlabel2oncompressed, N_EXAMPLES, overlap=OVERLAP)
+dataset_test = Objectnet(image_dir, transformations, objectnet2torch, onlabel2name, onlabel2oncompressed, N_EXAMPLES, OVERLAP, test_images=dataset.test_images)
 total_classes = len(dataset.classes_in_dataset)
 
 ## LOADERS
@@ -205,9 +218,10 @@ for epoch in range(50):
     training_top5_performance = total_training_top5 / total_examples
     print('training top1 score: %s' % training_top1_performance)
     print('training top5 score: %s' % training_top5_performance)
-    if (epoch+1) % 10 == 0:
-        top1_score, top5_score = evaluate()
-        print('top1 score', top1_score)
-        print('top5 score', top5_score)
+
+# evaluate when you're done
+top1_score, top5_score = evaluate()
+print('top1 score', top1_score)
+print('top5 score', top5_score)
 
 import pdb; pdb.set_trace()
