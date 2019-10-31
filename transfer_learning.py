@@ -93,10 +93,9 @@ class Objectnet(Dataset):
             self.classes_in_dataset = set()
             images_dict = dict()
             for dirname in os.listdir(root):
-                if overlap:
-                    class_name = dirname_to_classname[dirname]
-                    if class_name not in objectnet2torch:
-                        continue
+                class_name = dirname_to_classname[dirname]
+                if overlap and class_name not in objectnet2torch:
+                    continue
                 label = on2onlabel[class_name]
                 label = onlabel2oncompressed[label]
                 images = os.listdir(os.path.join(root, dirname))
