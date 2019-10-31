@@ -94,10 +94,11 @@ class Objectnet(Dataset):
             images_dict = dict()
             for dirname in os.listdir(root):
                 class_name = dirname_to_classname[dirname]
+                label = on2onlabel[class_name]
                 if overlap and class_name not in objectnet2torch:
                     continue
-                label = on2onlabel[class_name]
-                label = onlabel2oncompressed[label]
+                if overlap:
+                    label = onlabel2oncompressed[label]
                 # if num_examples == 64 and label == 111:
                 #     label = 30
                 # if num_examples == 64 and label == 112:
