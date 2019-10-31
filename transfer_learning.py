@@ -75,7 +75,7 @@ with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
 
 import pdb; pdb.set_trace()
 correct_set = objectnet2torch.keys()
-david_set = onname2label.values()
+david_set = onname2label.keys()
 
 
 ## BUILD DATASETS
