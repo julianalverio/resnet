@@ -88,6 +88,7 @@ transformations = transforms.Compose([
         normalize,
     ])
 
+
 class Objectnet(Dataset):
     def __init__(self, root, transform, objectnet2torch, on2onlabel, onlabel2oncompressed, num_examples, overlap, test_images=None):
         self.transform = transform
@@ -101,7 +102,6 @@ class Objectnet(Dataset):
                         continue
                 label = on2onlabel[dirname]
                 label = onlabel2oncompressed[label]
-
                 images = os.listdir(os.path.join(root, dirname))
                 if len(images) < num_examples:
                     continue
