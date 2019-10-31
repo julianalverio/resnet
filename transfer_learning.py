@@ -98,10 +98,10 @@ class Objectnet(Dataset):
                     continue
                 label = on2onlabel[class_name]
                 label = onlabel2oncompressed[label]
-                if num_examples == 64 and label == 111:
-                    label = 30
-                if num_examples == 64 and label == 112:
-                    label = 78
+                # if num_examples == 64 and label == 111:
+                #     label = 30
+                # if num_examples == 64 and label == 112:
+                #     label = 78
                 images = os.listdir(os.path.join(root, dirname))
                 if len(images) < num_examples:
                     continue
@@ -187,7 +187,11 @@ def evaluate():
 model = torchvision.models.resnet152(pretrained=True).eval()
 for param in model.parameters():
     param.requires_grad = False
-model.fc = nn.Linear(2048, total_classes, bias=True)
+if OVERLAP:
+    output_neurons = 113
+else:
+    output_neurons = 313
+model.fc = nn.Linear(2048, output_neurons, bias=True)
 model = model.eval().to(DEVICE)
 
 
