@@ -21,24 +21,10 @@ WORKERS = 50
 BATCH_SIZE = 32
 N_EXAMPLES = args.n
 OVERLAP = args.overlap
-#
-# with open('/Users/julianalverio/code/resnet/objectnet_to_imagenet_mapping') as f:
-#     map_list = eval(f.read())
-#
-# for image_map in map_list:
+
 
 with open('/storage/jalverio/resnet/objectnet_label_to_id_number.json') as f:
     onname2label = json.loads(f.read())
-
-
-
-
-
-## BUILD MAPPINGS
-# on2onlabel = dict()
-# for idx, name in enumerate(os.listdir('/storage/jalverio/objectnet-oct-24-d123')):
-#     on2onlabel[name] = idx
-# onlabel2name = {v: k for k, v in on2onlabel.items()}
 
 
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
@@ -55,21 +41,6 @@ with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
     oncompressed2onlabel = eval(f.read())
     onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
 
-
-
-
-
-# root = '/storage/jalverio/objectnet-oct-24-d123/'
-# dirnames = os.listdir(root)
-# all_labels = []
-# for dirname in dirnames:
-#     if dirname_to_classname[dirname] in objectnet2torch:
-#         all_labels.append(on2onlabel[dirname])
-# my_labels = set(all_labels)
-#
-# onlabel2oncompressed = dict()
-# for idx, label in enumerate(my_labels):
-#     onlabel2oncompressed[label] = idx
 
 correct_set = objectnet2torch.keys()
 david_set = onname2label.keys()
@@ -207,10 +178,7 @@ for epoch in range(50):
     total_training_top5 = 0
     print('starting epoch %s' % epoch)
     for batch_counter, (batch, labels) in enumerate(val_loader):
-        try:
-            labels = labels.to(DEVICE)
-        except:
-            import pdb; pdb.set_trace()
+        labels = labels.to(DEVICE)
         batch = batch.to(DEVICE)
         logits = model(batch)
         top1, top5 = accuracy(logits, labels)
