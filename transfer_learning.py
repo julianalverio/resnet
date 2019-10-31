@@ -165,7 +165,10 @@ def accuracy(logits, targets):
 def evaluate():
     total_top1, total_top5, total_examples = 0, 0, 0
     for batch_counter, (batch, labels) in enumerate(test_loader):
-        labels = labels.to(DEVICE)
+        try:
+            labels = labels.to(DEVICE)
+        except:
+            import pdb; pdb.set_trace()
         batch = batch.to(DEVICE)
         with torch.no_grad():
             logits = model(batch)
