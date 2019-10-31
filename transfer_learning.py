@@ -199,8 +199,10 @@ for epoch in range(50):
     total_training_top5 = 0
     print('starting epoch %s' % epoch)
     for batch_counter, (batch, labels) in enumerate(val_loader):
-        import pdb; pdb.set_trace()
-        labels = labels.to(DEVICE)
+        try:
+            labels = labels.to(DEVICE)
+        except:
+            import pdb; pdb.set_trace()
         batch = batch.to(DEVICE)
         logits = model(batch)
         top1, top5 = accuracy(logits, labels)
