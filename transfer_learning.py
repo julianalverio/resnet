@@ -97,7 +97,7 @@ class Objectnet(Dataset):
                     class_name = dirname_to_classname[dirname]
                     if class_name not in objectnet2torch:
                         continue
-                label = on2onlabel[dirname]
+                label = on2onlabel[class_name]
                 label = onlabel2oncompressed[label]
                 images = os.listdir(os.path.join(root, dirname))
                 if len(images) < num_examples:
