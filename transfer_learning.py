@@ -22,13 +22,11 @@ BATCH_SIZE = 32
 N_EXAMPLES = args.n
 OVERLAP = args.overlap
 #
-# import pdb; pdb.set_trace()
 # with open('/Users/julianalverio/code/resnet/objectnet_to_imagenet_mapping') as f:
 #     map_list = eval(f.read())
 #
 # for image_map in map_list:
 
-import pdb; pdb.set_trace()
 with open('/storage/jalverio/resnet/objectnet_label_to_id_number.json') as f:
     onname2label = json.loads(f.read())
 
@@ -73,7 +71,6 @@ with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
 # for idx, label in enumerate(my_labels):
 #     onlabel2oncompressed[label] = idx
 
-import pdb; pdb.set_trace()
 correct_set = objectnet2torch.keys()
 david_set = onname2label.keys()
 
@@ -138,8 +135,8 @@ class Objectnet(Dataset):
 
 
 image_dir = '/storage/jalverio/objectnet-oct-24-d123/'
-dataset = Objectnet(image_dir, transformations, objectnet2torch, onlabel2name, onlabel2oncompressed, N_EXAMPLES, overlap=OVERLAP)
-dataset_test = Objectnet(image_dir, transformations, objectnet2torch, onlabel2name, onlabel2oncompressed, N_EXAMPLES, OVERLAP, test_images=dataset.test_images)
+dataset = Objectnet(image_dir, transformations, objectnet2torch, onname2label, onlabel2oncompressed, N_EXAMPLES, overlap=OVERLAP)
+dataset_test = Objectnet(image_dir, transformations, objectnet2torch, onname2label, onlabel2oncompressed, N_EXAMPLES, OVERLAP, test_images=dataset.test_images)
 total_classes = len(dataset.classes_in_dataset)
 
 ## LOADERS
