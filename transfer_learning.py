@@ -23,9 +23,9 @@ N_EXAMPLES = args.n
 OVERLAP = args.overlap
 
 
+## GET MAPPINGS
 with open('/storage/jalverio/resnet/objectnet_label_to_id_number.json') as f:
     onname2label = json.loads(f.read())
-
 
 with open('/storage/jalverio/resnet/objectnet2torch.pkl', 'rb') as f:
     objectnet2torch = pickle.load(f)
@@ -40,10 +40,6 @@ with open('/storage/jalverio/resnet/dirname_to_objectnet_name.json') as f:
 with open('/storage/jalverio/resnet/objectnet_subset_to_objectnet_id') as f:
     oncompressed2onlabel = eval(f.read())
     onlabel2oncompressed = {int(v):int(k) for k,v in oncompressed2onlabel.items()}
-
-
-correct_set = objectnet2torch.keys()
-david_set = onname2label.keys()
 
 
 ## BUILD DATASETS
@@ -199,5 +195,3 @@ for epoch in range(50):
 top1_score, top5_score = evaluate()
 print('top1 score', top1_score)
 print('top5 score', top5_score)
-
-import pdb; pdb.set_trace()
